@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar 26 10:05:00 2026
+Created on Thu Mar 26 10:09:55 2026
 
 @author: johnherring
 """
@@ -16,34 +16,33 @@ from IPython.display import clear_output
 
 # modified from core code given by Nicholas Wogan (2025, personal comm.) and with additional code from Daniel Garduno-Ruiz (2025, personal comm.)
 
-#InputCode = 2 # 1 = Anchors, 2 = HiRes, 3 = Pleistocene
+InputCode = 2 # 2 = HiRes, 3 = Pleistocene
 # IGNORE ANCHORS
 
-#if InputCode == 1:
- #   InputMAT = sio.loadmat('time_GMST_pO2_FCH4_photochemInputAnchors.mat') # Can use anchor points only (20-ish) or hi-res interpolation
- #   Range_timeUV = InputMAT['timeUVb'] # already in Ga BP   # [0.0, 0.6, 2.4] # 3 cases, Ga BP
-  #  Range_GMST = InputMAT['AnchorGMST_C'] # in deg C GMST[45] #, 14] #, 20, 25, 30, 35, 40, 45] # 8 cases, GMST in C
-  #  Range_pO2 = InputMAT['AnchorpO2'] # in PAL O2.  [0.001, 0.01, 0.1, 0.5, 1, 1.5, 2] # 7 cases, pO2 in multiples of PAL
-    #Range_FCH4 = InputMAT['FCH4_tot_lo'] # LOW T-sensitivity reconstruction in xPIM emission flux  [40, 70, 100] #[0.584, 1, 5.84, 11.67] # 4 values spanning Beerling 2009 range, 
-   # Range_FCH4 = InputMAT['FCH4_tot_hi'] # HIGH T-sensitivity reconstruction in xPIM emission flux
-#elif InputCode == 2:
+#BernerpO2 = sio.loadmat('BernerPAL_380_0Ma.mat')
 
-InputMAT = sio.loadmat('time_GMST_pO2_FCH4_photochemInputHiRes_updated.mat')
-Range_timeUV = InputMAT['timeUVb_hires']#[113] # already in Ga BP   # [0.0, 0.6, 2.4] # 3 cases, Ga BP
-Range_GMST = InputMAT['GMST_C_hires']#[113] # in deg C GMST[45] #, 14] #, 20, 25, 30, 35, 40, 45] # 8 cases, GMST in C
-Range_pO2 = InputMAT['pO2_hires']#[113] # in PAL O2.  [0.001, 0.01, 0.1, 0.5, 1, 1.5, 2] # 7 cases, pO2 in multiples of PAL
-#Range_FCH4 = InputMAT['FCH4_tot_hires_lo'] # LOW T-sensitivity reconstruction in xPIM emission flux  [40, 70, 100] #[0.584, 1, 5.84, 11.67] # 4 values spanning Beerling 2009 range, 
-#Range_FCH4 = InputMAT['FCH4_tot_hires_Macro_max'] # HIGH T-sensitivity reconstruction in xPIM emission flux
-Range_FCH4 = InputMAT['FCH4_tot_hires_BC89_std']#[113] # HIGH T-sensitivity reconstruction in xPIM emission flux
-#Range_FCH4 = InputMAT['FCH4_tot_hires_Macro_min'] # HIGH T-sensitivity reconstruction in xPIM emission flux
-#else:
+if InputCode == 2:
+    InputMAT = sio.loadmat('time_GMST_pO2_FCH4_photochemInputHiRes.mat') # time_GMST_pO2_FCH4_photochemInputHiRes_ST #Holmes_anchors
+    #Range_timeUV = InputMAT['timeUVb_hires'] # already in Ga BP   # [0.0, 0.6, 2.4] # 3 cases, Ga BP
+   # Range_timeUV = InputMAT['time_CH4FluxB09'] # really essentially identical to timeUVb_hires, every 10 Ma
+   # Range_GMST = InputMAT['GMST_C_hires'] #8 in deg C GMST[45] #, 14] #, 20, 25, 30, 35, 40, 45] # 8 cases, GMST in C
+   # Range_pO2 = InputMAT['pO2_hires'] # in PAL O2.  [0.001, 0.01, 0.1, 0.5, 1, 1.5, 2] # 7 cases, pO2 in multiples of PAL
+    #BernerpO2['BernerPAL'] # PAL over last 380 Ma at 10 Ma intervals from Berner+2006 (Harfoot+2007 curve b)
+    #Range_FCH4 = InputMAT['FCH4_tot_hires_lo'] # LOW T-sensitivity reconstruction in xPIM emission flux  [40, 70, 100] #[0.584, 1, 5.84, 11.67] # 4 values spanning Beerling 2009 range, 
+    #Range_FCH4 = InputMAT['FCH4_tot_hires_hi'] # HIGH T-sensitivity reconstruction in xPIM emission flux
+    #Range_FCH4 = InputMAT['FCH4_tot_OG'] #
+    Range_FCH4 = InputMAT['FluxCH4_B09'] #8 final PI output modified to match Table 2 PI flux in B+09
+  #  Range_pCH4 = InputMAT['Holmes_pCH4']#[-1]
+   # Range_Teq = InputMAT['Teq_C_hires']#[-1]
 
-  #  InputMAT = sio.loadmat('time_GMST_pO2_FCH4_photochemInputPleisto.mat')
-  #  Range_timeUV = InputMAT['timeUVb_Pleisto5ka'] # already in Ga BP   # [0.0, 0.6, 2.4] # 3 cases, Ga BP
-  #  Range_GMST = InputMAT['GMST_C_Pleisto5ka'] # in deg C GMST[45] #, 14] #, 20, 25, 30, 35, 40, 45] # 8 cases, GMST in C
-   # Range_pO2 = InputMAT['pO2_Pleisto5ka'] # in PAL O2.  [0.001, 0.01, 0.1, 0.5, 1, 1.5, 2] # 7 cases, pO2 in multiples of PAL
+else:
+    InputMAT = sio.loadmat('time_GMST_pO2_FCH4_photochemInputPleisto.mat')
+    Range_timeUV = InputMAT['timeUVb_Pleisto5ka'] # already in Ga BP   # [0.0, 0.6, 2.4] # 3 cases, Ga BP
+    Range_GMST = InputMAT['GMST_C_Pleisto5ka'] # in deg C GMST[45] #, 14] #, 20, 25, 30, 35, 40, 45] # 8 cases, GMST in C
+    Range_pO2 = InputMAT['pO2_Pleisto5ka'] # in PAL O2.  [0.001, 0.01, 0.1, 0.5, 1, 1.5, 2] # 7 cases, pO2 in multiples of PAL
     #Range_FCH4 = InputMAT['FCH4_tot_Pleisto_lo5ka'] # LOW T-sensitivity reconstruction in xPIM emission flux  [40, 70, 100] #[0.584, 1, 5.84, 11.67] # 4 values spanning Beerling 2009 range, 
- #   Range_FCH4 = InputMAT['FCH4_tot_Pleisto_hi5ka'] # HIGH T-sensitivity reconstruction in xPIM emission flux
+    Range_FCH4 = InputMAT['FCH4_tot_Pleisto_hi5ka'] # HIGH T-sensitivity reconstruction in xPIM emission flux
+    Range_Teq = InputMAT['Teq_C_Pleisto5ka']
 # OR
 # InputMAT = sio.loadmat('time_GMST_pO2_FCH4_photochemInputPleisto.mat')
 
@@ -59,26 +58,26 @@ Range_FCH4 = InputMAT['FCH4_tot_hires_BC89_std']#[113] # HIGH T-sensitivity reco
 # Total number of test cases = 7*3*4 = 84 per script
 # NOMINAL = [2 5 1 2]
 
-CH4_Array = np.zeros((len(Range_GMST), 9)) # 8 outputs in product array
+CH4_Array = np.zeros((len(Range_FCH4), 8)) # 6 outputs in product array
 #1 7 3 4  initializes empty "zero" 4-D array in which to store interpolation matrix
 # 4 across to contain pCH4, Tau_CH4, pO3 (DU) and surface tropo pO3 + bug check (last 2 columns must be identical)
 # should be accessed as (ii, jj, kk, ll) for 8, 7, 6, 4
 counter = 0 # initializes progress counter
 
-for ii in range(len(Range_GMST)):
+for ii in range(len(Range_FCH4)):
    # for jj in range(len(Range_pO2)):
       #  for kk in range(len(Range_timeUV)):
          #   for ll in range(len(Range_FCH4)):
                 # runs script iteratively
                 
 
-                TauSun = Range_timeUV[ii] # sets stellar age
+               # TauSun = Range_timeUV[ii] # sets stellar age
 
                 pc = utils.EvoAtmosphereJohn(
                     'input/zahnle_earth.yaml', # Chemical reactions
-                    'input/settings_Earth_old.yaml', # Bunch of settings are in here
+                    'input/settings_Earth_old.yaml', # Bunch of settings are in here # note THE CHANGE back to original settings here (not Wogan+2025)
                     'input/atmosphere_ModernEarth.txt', # The "initial condition"
-                    age_of_sun=TauSun[0] # 0.0 # set age of sun here in billions of years ago.
+                    age_of_sun=0.0#TauSun[0] # 0.0 # set age of sun here in billions of years ago.
                 )
                 pc.var.verbose = 0 # Turn off printing
 
@@ -92,9 +91,9 @@ for ii in range(len(Range_GMST)):
                 #data_mix_O3 = [3.0e-8, 3.2e-8, 5.0e-8, 3.3e-7, 2.2e-6, 5.7e-6, 6.5e-6, 6.2e-6, 4.7e-6, 2.9e-6, 1.6e-6, 8.6e-7, 5.6e-7, 4.1e-7]
 
                 # Set the oxygen partial pressure here (dynes/cm^2)
-                scalingO2 = 1*Range_pO2[ii] # lo = 0.001 # hi = 2 # nominal = 1
+              #  scalingO2 = 1*Range_pO2[ii] # lo = 0.001 # hi = 2 # nominal = 1
                 #print('ScalingO2 =', scalingO2[0])
-                pc.set_lower_bc('O2', bc_type='press', press=scalingO2[0]*0.212730e6) # Modern value = 0.212730e6 dynes/cm^2 
+              #  pc.set_lower_bc('O2', bc_type='press', press=scalingO2[0]*0.212730e6) # Modern value = 0.212730e6 dynes/cm^2 
                 # 1 dyne/cm^2 = 0.1 Pa or 1/1.013e6 atm
 
                 # Set N2O flux into atmosphere
@@ -119,18 +118,21 @@ for ii in range(len(Range_GMST)):
                 # 0.6 not much better, but lengthens lifetime by 6 years and exaggerates yN2O up to 296 ppb instead of 283 ppb
                 # hence 0.6 OK, but 0.7 probably better (may be conservative???)
                 vdep_N2O = ScalingVdep*1e-4 #1e-4
-                #pc.set_lower_bc('N2O', bc_type='vdep + dist flux', flux=FN2O, vdep=vdep_N2O, height=-1)
+               # pc.set_lower_bc('N2O', bc_type='vdep + dist flux', flux=FN2O, vdep=vdep_N2O, height=-1) # SHUT OFF for now
 
                 scalingF_CH4 = Range_FCH4[ii] # 0.4-0.5 preindustrial wetland flux of CH4 (Beerling et al. 2009) only 10.66 (midrange) to simulated 13.13 Tmol CH4/yr, vs. 26.7 Tmol/yr in std forcing below
-                FCH4 = 0.4*scalingF_CH4[0]*1e11 # standard 1e11 flux from Wogan (personal comm) = 26.7 Tmol CH4/yr global = 428.4 Tg CH4/yr, here scaled down to match 171 Tg/yr CH4 (midrange estimate from prior studies in Table 2 Beerling + 2009)
+                FCH4 = 0.4*scalingF_CH4[0]*1e11 # 4.67e10 # RESTORE!!! standard 1e11 flux from Wogan (personal comm) = 26.7 Tmol CH4/yr global = 428.4 Tg CH4/yr, here scaled down to match 171 Tg/yr CH4 (midrange estimate from prior studies in Table 2 Beerling + 2009)
                 # 267.1291 = conversion from molec/cm^2/s to moles/yr global!
-                vdep_CH4 = 0.0005 # = 0.002/4; based on simple diffusion-limitation parameterization inspired by Ridgwell+1999 #0 # per Wogan (personal comm) and 
+                vdep_CH4 = 0.0005 #0.002/4 # 0 per Wogan (personal comm) and 
                 pc.set_lower_bc('CH4', bc_type='vdep + dist flux', flux=FCH4, vdep=vdep_CH4, height=-1)
+              #  pCH4_in = Range_pCH4[ii]
+             #   pc.set_lower_bc('CH4', bc_type='press', press = pCH4_in[0]) # type: press, press: 2.12730e+05
 
 
-                T = Range_GMST[ii] # 14 
+                T = [14]#Range_GMST[ii] #Range_Teq#[ii] #[24.5] #25.56 PI equatorial T #Range_Teq[ii] #[14] #[14] #Range_GMST[ii] # 14 PI GMST # 24.5 C roughly approximates surface T in nominal Jan equatorial T-profile
                 # 20 # 20 # 24 Celsius, reasonable preindustrial modern average (14 rather low)
-                surf_temp = 273.15 + T[0] # Celsius to Kelvin
+                surf_temp = 273.15 + T[0] #(0.0146*T[0]*T[0] + 0.1612*T[0] + 19.624) # best-fit polynomial (R2 = 0.9311)
+                # for equatorial mean surf T from GMST input per Judd et al. 2024 LTGs in Celsius, then convert Celsius to Kelvin
                 # FROM Garduno-Ruiz 2025, personal comm.
                 # moist adiabat temperature profiles (units: K)
                 temp_profiles = np.loadtxt('input/moist_adiabat_temp_profiles.txt')
@@ -199,7 +201,6 @@ for ii in range(len(Range_GMST)):
                 #print(jtrop)
 
                 pc.set_press_temp_edd(press_profile,temp_profile,edd_profile,trop_p=tropoP)
-                #print(tropoP)
 
                 
                 #
@@ -207,48 +208,6 @@ for ii in range(len(Range_GMST)):
                 pc.initialize_robust_stepper(pc.wrk.usol) 
                 pc.find_steady_state()
                 #
-
-                # Integrate to equilibrium and plot along the way
-                #while True:
-                    
-                #    clear_output(wait=True)
-
-                    # Make plot
-                    #fig,ax = plt.subplots(1,1,figsize=[6,5])
-                    
-                    # This function returns the state of the atmosphere in dictionary
-                    # sol = pc.mole_fraction_dict()
-
-                    # Plots species
-                    #species=['H2O','O2','O3','NO','N2O']
-                    #for i,sp in enumerate(species):
-                    #    ax.plot(sol[sp],pc.var.z/1e5, label=sp) # variation to plot elevation not pressure profile
-                       
-
-                    #ax.plot(data_mix_N2O,data_alt_N2O,label="N2O Profile Data") #
-                    #ax.plot(data_mix_O3,data_alt_O3,label="O3 Profile Data") #
-                    #ax.plot(pc.var.temperature,pc.var.z/1e5,label="T Profile") #
-                    #ax.set_xscale('log')
-                    #ax.set_yscale('log')
-                    #ax.invert_yaxis()
-                    #ax.grid(alpha=0.4)
-                    #ax.set_xlim(1e-10,1)
-                    # ax.set_ylabel('Pressure (bars)') 
-                    # pressure version of plot only goes to 1 bar (~1 atm) = constant P preserved
-                    #ax.set_ylabel('Elevation above surface (km)')
-                    #ax.set_xlabel('Mixing ratio')
-                    #ax.legend(ncol=1,bbox_to_anchor=(1,1.0),loc='upper left')
-                    #ax.text(0.02, 1.04, 't = '+'%e s'%pc.wrk.tn, \
-                     #   size = 15,ha='left', va='bottom',transform=ax.transAxes)
-                    #plt.show()
-
-                    # break
-                 #   for i in range(50):
-                 #       give_up, converged = pc.robust_step()
-                 #       if give_up or converged:
-                 #           break
-                 #   if give_up or converged:
-                 #       break    
 
                 # After converged check N2O mole fraction at surface
                 sol = pc.mole_fraction_dict()
@@ -290,12 +249,11 @@ for ii in range(len(Range_GMST)):
 
                 
                 counter = counter + 1 # updates progress bar
-                print('Progress %: ',100*counter/len(Range_GMST)) # 84.  168) #1680) # prints progress bar
+                print('Progress %: ',100*counter/len(Range_FCH4)) # 84.  168) #1680) # prints progress bar
                 print(pc.check_for_convergence())
                 #print(pc.var.temperature[0])
                 #print(pc.var.edd[0])
                 #print(sol['pressure'][0]/1e6)
-                N = pc.gas_fluxes()
                 
                 #Tau_CH4_Array[ii, jj, kk, ll] = Tau_CH4 # loads most recent output into matching array cell
 
@@ -303,20 +261,12 @@ for ii in range(len(Range_GMST)):
                 indO3 = pc.dat.species_names.index('O3')
                 colO3 = (np.sum(pc.wrk.usol[indO3,:]*dz))/2.69e16 # crucial output for O3 column thickness, 300 DU typical broadly
                 # with conversion to Dobson Units (DU) from molecules/cm^2 column (using 2.69e16 molec/cm^2 = 1 DU) - see ozonewatch.gsfc.nasa.gov/facts/dobson_SH.html
-                CH4_Array[ii,2] = colO3 # 3rd column contains pO3 column in DU
+                CH4_Array[ii,2] = sol['OH'][0] #colO3 # 3rd column contains pO3 column in DU
                 CH4_Array[ii,3] = sol['O3'][0] # resolves surface tropo pO3 in 4th column
 
-                # index of strato O3 layer peak
-                #jstratoO3 = np.argmax(sol['O3']*press_profile) + 1 # multiplies atmospheric pressure profile by yO3 profile (yO3*P = pO3 per Dalton's Law) and finds maximum pO3
-                #CH4_Array[ii,6] = sol['OH'][0] # OH in col 7
-                #CH4_Array[ii,7] = sol['CO'][0] # CO in col 7
                 CH4_Array[ii,6] = pc.gas_fluxes()[0]['O2'] # O2 fluxes to maintain prescribed pO2
                 CH4_Array[ii,7] = sol['CH4'][0]*pc.wrk.density[0]*vdep_CH4 # soil uptake/dry deposition CH4 flux
                 #surface_flux_CH4/pc.gas_fluxes()[0]['O2'] # ratio of CH4:O2 fluxes
-                pl=pc.production_and_loss('O2',pc.wrk.usol)
-                O2rainout = (np.sum(pl.loss[:, pl.loss_rx.index('rainout')]*dz))
-                #print('O2 rainout = %.2e'%(O2rainout))
-                CH4_Array[ii,8] = O2rainout #
 
                  # collates output for each timestep
                 #Tau_N2O[isp] = (colN2O/FN2O)/31536000
@@ -328,7 +278,11 @@ for ii in range(len(Range_GMST)):
 Tau_CH4_arr = {'pCH4_TauCH4_colO3_pO3tropo_surf_bound_O2flux_soilDryDepFlux': CH4_Array}
 
 #if InputCode == 1:
-  #  sio.savemat('CH4_O3_outputs_PhaneroAnchors.mat',Tau_CH4_arr)
+ #   sio.savemat('CH4_O3_outputs_PhaneroAnchors.mat',Tau_CH4_arr)
 #elif InputCode == 2:
+ #   sio.savemat('CH4_O3_outputs_PhaneroHiRes.mat',Tau_CH4_arr)
+#else:
+ #   sio.savemat('CH4_O3_outputs_Pleisto.mat',Tau_CH4_arr)
 
-sio.savemat('CH4_O3_outputs_PhaneroHiRes_revisedFinal_STDREF.mat',Tau_CH4_arr) #revisedFinal_strong_gammaT
+sio.savemat('CH4_O3_outputs_B09FCH4_effVdepSoil00005_14Cinterp_PIbcTest_SSHolmes.mat',Tau_CH4_arr) # works! Could also save surface pN2O and O3 column thickness to similar .mat files
+

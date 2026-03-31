@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar 26 10:05:00 2026
+Created on Thu Mar 26 09:58:19 2026
 
 @author: johnherring
 """
@@ -30,11 +30,11 @@ from IPython.display import clear_output
 
 InputMAT = sio.loadmat('time_GMST_pO2_FCH4_photochemInputHiRes_updated.mat')
 Range_timeUV = InputMAT['timeUVb_hires']#[113] # already in Ga BP   # [0.0, 0.6, 2.4] # 3 cases, Ga BP
-Range_GMST = InputMAT['GMST_C_hires']#[113] # in deg C GMST[45] #, 14] #, 20, 25, 30, 35, 40, 45] # 8 cases, GMST in C
-Range_pO2 = InputMAT['pO2_hires']#[113] # in PAL O2.  [0.001, 0.01, 0.1, 0.5, 1, 1.5, 2] # 7 cases, pO2 in multiples of PAL
+Range_GMST = InputMAT['GMST_C84']#[113] # in deg C GMST[45] #, 14] #, 20, 25, 30, 35, 40, 45] # 8 cases, GMST in C
+Range_pO2 = InputMAT['pO2_max']#[113] # in PAL O2.  [0.001, 0.01, 0.1, 0.5, 1, 1.5, 2] # 7 cases, pO2 in multiples of PAL
 #Range_FCH4 = InputMAT['FCH4_tot_hires_lo'] # LOW T-sensitivity reconstruction in xPIM emission flux  [40, 70, 100] #[0.584, 1, 5.84, 11.67] # 4 values spanning Beerling 2009 range, 
 #Range_FCH4 = InputMAT['FCH4_tot_hires_Macro_max'] # HIGH T-sensitivity reconstruction in xPIM emission flux
-Range_FCH4 = InputMAT['FCH4_tot_hires_BC89_std']#[113] # HIGH T-sensitivity reconstruction in xPIM emission flux
+Range_FCH4 = InputMAT['FCH4_tot_hires_BC89_max']#[113] # HIGH T-sensitivity reconstruction in xPIM emission flux
 #Range_FCH4 = InputMAT['FCH4_tot_hires_Macro_min'] # HIGH T-sensitivity reconstruction in xPIM emission flux
 #else:
 
@@ -331,4 +331,4 @@ Tau_CH4_arr = {'pCH4_TauCH4_colO3_pO3tropo_surf_bound_O2flux_soilDryDepFlux': CH
   #  sio.savemat('CH4_O3_outputs_PhaneroAnchors.mat',Tau_CH4_arr)
 #elif InputCode == 2:
 
-sio.savemat('CH4_O3_outputs_PhaneroHiRes_revisedFinal_STDREF.mat',Tau_CH4_arr) #revisedFinal_strong_gammaT
+sio.savemat('CH4_O3_outputs_PhaneroHiRes_revisedFinal_maxEnvelope.mat',Tau_CH4_arr) #revisedFinal_strong_gammaT

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar 26 10:05:00 2026
+Created on Thu Mar 26 10:00:52 2026
 
 @author: johnherring
 """
@@ -29,13 +29,12 @@ from IPython.display import clear_output
 #elif InputCode == 2:
 
 InputMAT = sio.loadmat('time_GMST_pO2_FCH4_photochemInputHiRes_updated.mat')
-Range_timeUV = InputMAT['timeUVb_hires']#[113] # already in Ga BP   # [0.0, 0.6, 2.4] # 3 cases, Ga BP
-Range_GMST = InputMAT['GMST_C_hires']#[113] # in deg C GMST[45] #, 14] #, 20, 25, 30, 35, 40, 45] # 8 cases, GMST in C
-Range_pO2 = InputMAT['pO2_hires']#[113] # in PAL O2.  [0.001, 0.01, 0.1, 0.5, 1, 1.5, 2] # 7 cases, pO2 in multiples of PAL
-#Range_FCH4 = InputMAT['FCH4_tot_hires_lo'] # LOW T-sensitivity reconstruction in xPIM emission flux  [40, 70, 100] #[0.584, 1, 5.84, 11.67] # 4 values spanning Beerling 2009 range, 
-#Range_FCH4 = InputMAT['FCH4_tot_hires_Macro_max'] # HIGH T-sensitivity reconstruction in xPIM emission flux
-Range_FCH4 = InputMAT['FCH4_tot_hires_BC89_std']#[113] # HIGH T-sensitivity reconstruction in xPIM emission flux
-#Range_FCH4 = InputMAT['FCH4_tot_hires_Macro_min'] # HIGH T-sensitivity reconstruction in xPIM emission flux
+Range_timeUV = InputMAT['timeUVb_hires'] # already in Ga BP   # [0.0, 0.6, 2.4] # 3 cases, Ga BP
+Range_GMST = InputMAT['GMST_C_hires'] # GMST_C_hires in deg C GMST[45] #, 14] #, 20, 25, 30, 35, 40, 45] # 8 cases, GMST in C
+Range_pO2 = InputMAT['pO2_hires'] # pO2_hires in PAL O2.  [0.001, 0.01, 0.1, 0.5, 1, 1.5, 2] # 7 cases, pO2 in multiples of PAL
+#Range_FCH4 = InputMAT['FCH4_tot_hires_BC89_max'] # HIGH T-sensitivity reconstruction in xPIM emission flux
+Range_FCH4 = InputMAT['FCH4_tot_hires_BC89_minCoal'] # HIGH T-sensitivity reconstruction in xPIM emission flux
+#Range_FCH4 = InputMAT['FCH4_tot_hires_BC89_min'] # HIGH T-sensitivity reconstruction in xPIM emission flux
 #else:
 
   #  InputMAT = sio.loadmat('time_GMST_pO2_FCH4_photochemInputPleisto.mat')
@@ -206,12 +205,12 @@ for ii in range(len(Range_GMST)):
                 # Initialize an integrator
                 pc.initialize_robust_stepper(pc.wrk.usol) 
                 pc.find_steady_state()
-                #
 
+                #
                 # Integrate to equilibrium and plot along the way
-                #while True:
+               # while True:
                     
-                #    clear_output(wait=True)
+               #     clear_output(wait=True)
 
                     # Make plot
                     #fig,ax = plt.subplots(1,1,figsize=[6,5])
@@ -243,12 +242,12 @@ for ii in range(len(Range_GMST)):
                     #plt.show()
 
                     # break
-                 #   for i in range(50):
+                #    for i in range(50):
                  #       give_up, converged = pc.robust_step()
                  #       if give_up or converged:
-                 #           break
-                 #   if give_up or converged:
-                 #       break    
+                #            break
+                #    if give_up or converged:
+                #        break    
 
                 # After converged check N2O mole fraction at surface
                 sol = pc.mole_fraction_dict()
@@ -283,7 +282,7 @@ for ii in range(len(Range_GMST)):
 
                 #print('N2O molecular lifetime in years =', (col/net)/31536000)
 
-                Tau_CH4 = (col/FCH4)/(60*60*24*365.25) # N2O "emission lifetime" (column burden/emission flux) converted to years
+                Tau_CH4 = (col/FCH4)/(60*60*24*365.25) # N2O "emission lifetime" (column burden/emission flux) converted to years # 31536000
 
                 print(ii+1,'CH4 emission lifetime in years =', Tau_CH4) # (col/FN2O)/31536000)
                 CH4_Array[ii,1] = Tau_CH4 # accompanies surface pCH4
@@ -295,7 +294,6 @@ for ii in range(len(Range_GMST)):
                 #print(pc.var.temperature[0])
                 #print(pc.var.edd[0])
                 #print(sol['pressure'][0]/1e6)
-                N = pc.gas_fluxes()
                 
                 #Tau_CH4_Array[ii, jj, kk, ll] = Tau_CH4 # loads most recent output into matching array cell
 
@@ -317,6 +315,7 @@ for ii in range(len(Range_GMST)):
                 O2rainout = (np.sum(pl.loss[:, pl.loss_rx.index('rainout')]*dz))
                 #print('O2 rainout = %.2e'%(O2rainout))
                 CH4_Array[ii,8] = O2rainout #
+                
 
                  # collates output for each timestep
                 #Tau_N2O[isp] = (colN2O/FN2O)/31536000
@@ -330,5 +329,8 @@ Tau_CH4_arr = {'pCH4_TauCH4_colO3_pO3tropo_surf_bound_O2flux_soilDryDepFlux': CH
 #if InputCode == 1:
   #  sio.savemat('CH4_O3_outputs_PhaneroAnchors.mat',Tau_CH4_arr)
 #elif InputCode == 2:
+sio.savemat('CH4_O3_outputs_PhaneroHiRes_revisedFinal_minCoal.mat',Tau_CH4_arr)
+#else:
+ #   sio.savemat('CH4_O3_outputs_Pleisto.mat',Tau_CH4_arr)
 
-sio.savemat('CH4_O3_outputs_PhaneroHiRes_revisedFinal_STDREF.mat',Tau_CH4_arr) #revisedFinal_strong_gammaT
+
