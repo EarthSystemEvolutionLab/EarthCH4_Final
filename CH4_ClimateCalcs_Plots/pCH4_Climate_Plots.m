@@ -31,6 +31,7 @@ colorRFtotrange = 1.3*colorRFtot;
 colorT = [0 0 0];
 darkgreen = [0,130,0]./255;
 controlColor = [45,0,0]./255;
+Emcolor = [255,50,70]./255;
 
 % Thermodynamic constants
 Constant.R = 8.3144; % J./mol*K; ideal gas constant = n*kB
@@ -585,12 +586,12 @@ set(gca,'xlim',[-10,800]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
 xlabel('Age Before Present (ka)'); ylabel('pCH_4 (ppb atm)')
-title('Pleistocene pCH_4 Data vs. Model Output')
+%title('Pleistocene pCH_4 Data vs. Model Output')
 %ylim([-20,350])
 pbaspect([3 1 1])
 fontsize(24,"points") % 14
-L = legend('Preindustrial Modern pCH_4 (715 ppb, ~565 ppb pre-agrarian)','Ice Core pCH_4 (last 800 ka, from Loulergue+2008)',...
-    'Modeled pCH_4 (\gamma_T per Conrad 2023, GMST per Snyder 2016)','FontSize',24); % 'Revised Phanerozoic pCH_4 (Weak \gamma_T for C-cycle)', 14,'Modern pN_2O (337 ppb)'
+L = legend('Preindustrial Modern pCH_4 (565-715 ppb)','Ice Core pCH_4 (last 800 ka, from Loulergue+2008)',...
+    'Modeled pCH_4 (GMST per Snyder 2016)','FontSize',24); % 'Revised Phanerozoic pCH_4 (Weak \gamma_T for C-cycle)', 14,'Modern pN_2O (337 ppb)'
 %     %'Revised Phanerozoic pCH_4 (Weak \gamma_T, per Zhu+2014)',
 
 L.AutoUpdate = 'off';
@@ -669,63 +670,31 @@ box on
 
 
 
-figure(502);clf
+%figure(502);clf
 
-tiledlayout(1,1,"TileSpacing","compact","Padding","compact");
-nexttile
+%tiledlayout(1,1,"TileSpacing","compact","Padding","compact");
+%nexttile
 
-% Ice Core data over past 800 ka from Loulergue+2008 (as ref'd and shown in Schilt+2010) no filtering applied,
-% taken from Supplemental Material Table - all time in years BP from 1950
-% (no correction applied, trivial), all mean pCH4 values in ppb
-%IceCoreCH4 = readtable("All_CSV_files/Loulergue+2008_pCH4_800ka_icecore_cfSchilt+2010.xlsx");
-%IceCoreTime_yrsBP1950 = IceCoreCH4{:,1};
-%IceCorepCH4_ppb = IceCoreCH4{:,2};
-
-%size = 45;
-
-%scatter(-5,715,'square','MarkerFaceColor','k')
-%hold on
-scatter(IceCoreTime_yrsBP1950./1e3,IceCorepCH4_ppb,'+','MarkerEdgeColor','k')
-hold on
-
-%plot(time_Pleisto./1e3,pCH4_Pleisto_hi(1:5:length(timeslices2)).*1e9,'^','MarkerFaceColor','m') % 'none' for no marker
-%hold on
-%plot(time_Pleisto./1e3,pCH4_Pleisto_min.*1e9,'d','MarkerFaceColor','none','MarkerEdgeColor','k')
-%hold on
-%plot(time_Pleisto./1e3,pCH4_Pleisto.*1e9,'v','MarkerFaceColor','b','MarkerEdgeColor','b')
-%hold on
-%plot(time_Pleisto./1e3,pCH4_Pleisto_high.*1e9,'^','MarkerFaceColor','m','MarkerEdgeColor','m')
-%hold on
-%plot(timeslices./1e3,Phan_pCH4_hires_noT.*1e9,'g','Marker','none')
-%hold on
-%yline([100],'--k')
-
-%plot(timeslices2./1e3,Phan_pCH4_Pleisto_hi.*1e9,'-m','Marker','none') % 'none' for no marker
-%hold on
-%plot(timeslices2./1e3,Phan_pCH4_Pleisto_lo.*1e9,'-b','Marker','none')
-%hold on
-%scatter(-5,565,'square','MarkerFaceColor','k')
-%hold on
-%errorbar(-5,565,NaN,150,'Color','k','CapSize',1)
+%scatter(IceCoreTime_yrsBP1950./1e3,IceCorepCH4_ppb,'+','MarkerEdgeColor','k')
 %hold on
 
-xline([0],'-k')
+%xline([0],'-k')
 %plot(4.5-(time./1e9),PGC.pH.surface,'color','r','LineStyle','-')
-set(gca,'XDir','reverse');
-set(gca,'xlim',[0,1000],'ylim',[300,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
+%set(gca,'XDir','reverse');
+%set(gca,'xlim',[0,1000],'ylim',[300,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
-xlabel('Age Before Present (ka)'); ylabel('pCH_4 (ppb atm)')
+%xlabel('Age Before Present (ka)'); ylabel('pCH_4 (ppb atm)')
 %ylim([-20,350])
-pbaspect([3 1 1])
-fontsize(24,"points") % 14
+%pbaspect([3 1 1])
+%fontsize(24,"points") % 14
 %L = legend('Preindustrial Modern pCH_4 (715 ppb, ~565 ppb pre-agrarian)','Ice Core pCH_4 (last 800 ka, Loulergue+2008)',...
 %    'Revised Phanerozoic pCH_4 (Weak \gamma_T, per Zhu+2014)','Revised Phanerozoic pCH_4 (Strong \gamma_T, per Conrad 2023)','FontSize',18); % 'Revised Phanerozoic pCH_4 (Weak \gamma_T for C-cycle)', 14,'Modern pN_2O (337 ppb)'
 %     %'Revised Phanerozoic pCH_4 (Strong \gamma_T)',
 
 %L.AutoUpdate = 'off';
 
-box on
+%box on
 
 
 
@@ -973,7 +942,7 @@ hold on
 pbaspect([5 2 2])
 xlabel('Age Before Present (Ma)'); 
 ylabel('GMST (^\circC)') % ,'Solar + CO_2 + Weak CH_4 \gamma_T',
-L = legend([L1, L2, L4, L5],'GMST Prior','Solar + CO_2 only','Solar + CO_2 + CH_4','PI GMST (14^oC)','FontSize',20); % 'CO_2 + Low CH_4',
+L = legend([L1, L2, L4, L5],'GMST Prior','Solar + CO_2 only','Solar + CO_2 + CH_4','FontSize',20); % 'CO_2 + Low CH_4', ,'PI GMST (14^oC)'
 %L = legend([L2, L3, L4, L1],'GMST Forcing','CO_2 only','CO_2 and CH_4 only',...
 %    'CO_2, CH_4, and N_2O','FontSize',12,'Position',[0.5+0.01 0.1+0.01 0.1 0.08]); % 
 %L = legend('','','','CO_2, CH_4, and N_2O','GMST Forcing Prior (J+24)','CO_2 only','CO_2 and CH_4 only','FontSize',10); % ,...
@@ -1099,5 +1068,166 @@ set(gca,'xlim',[-10,375]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
 %fontsize(18,"points") % 14
 fontsize(24,"points") % 14
 %set(gca,'YTickLabel',[]);
+yticks([])
+
+
+
+
+
+polyx = cat(1,MegaTime./1e6,flip(MegaTime./1e6));
+polypCH4_minmax = cat(1,MaxEnv_pCH4.*1e6,flip(MinEnv_pCH4.*1e6));
+
+figure(20111);clf
+
+lc = [0 0 0];
+rc = [0 0 0];
+set(figure(20111),'defaultAxesColorOrder',[lc; rc]);
+
+tiledlayout(2,1,"TileSpacing","compact","Padding","compact");
+nexttile
+
+yyaxis left
+
+size = 45;
+
+%scatter(TotalTime(1:16)./1e6,Total_pCH4(1:16).*1e6,size,'o','MarkerFaceColor','b')
+%hold on
+%scatter(AnchorTime./1e6,Phan_pCH4_hi.*1e6,size,'^','MarkerFaceColor','m')
+%hold on
+%scatter(AnchorTime./1e6,Phan_pCH4_noT.*1e6,size,'d','MarkerFaceColor','g')
+%hold on
+%plot(timeslices./1e6,Phan_pCH4_hires_hi.*1e6,'m','Marker','none') % 'none' for no marker
+%hold on
+%plot(TotalTime(17:end)./1e6,Total_pCH4(17:end).*1e6,'b','Marker','none','LineStyle','-')
+%hold on
+%plot(MegaTime./1e6,Total_pCH4_min.*1e6,'k','Marker','d','LineStyle','-','MarkerEdgeColor','k','MarkerFaceColor','none')
+%hold on
+
+semilogy(TimePhanCH4./1e6,PhanCH4vals./1e3,'k','Marker','o','LineStyle','-','MarkerEdgeColor','k')
+hold on
+plot(polyshape(polyx,polypCH4_minmax),'FaceColor',Emcolor,'EdgeColor',Emcolor);
+hold on
+semilogy(MegaTime./1e6,Total_pCH4_high.*1e6,'m','Marker','none','LineStyle','-','MarkerEdgeColor','m','MarkerFaceColor','m','LineWidth',2);%,'MarkerSize',3)
+hold on
+
+%plot(MegaTime./1e6,MaxEnv_pCH4.*1e6,'m','Marker','none','LineStyle',':','LineWidth',2)
+%hold on
+%plot(MegaTime./1e6,MinEnv_pCH4.*1e6,'m','Marker','none','LineStyle',':','LineWidth',2)
+%hold on
+annotation('textbox',[.255 .85-0.031 .1 .1],'String','A','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
+hold on
+xline([0],'-k')
+hold on
+semilogy(-5,0.715,'o','MarkerFaceColor','k')
+hold on
+semilogy(-5,0.565,'o','MarkerFaceColor','k')
+hold on
+yticks([0.1, 1, 10, 100, 1000]);
+yticklabels({'0.1','1','10','100','1000'});
+%plot(4.5-(time./1e9),PGC.pH.surface,'color','r','LineStyle','-')
+set(gca,'XDir','reverse');
+set(gca,'xlim',[-10,375],'ylim',[0.02,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
+%set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
+%set(gca,'yaxislocation','left')
+%xlabel('Age Before Present (Ma)'); 
+ylabel('pCH_4 (ppm atm)')
+%ylim([-20,320]) % 350
+pbaspect([2 1 1])
+fontsize(16,"points") % 14 Preindustrial pCH_4 (0.565-0.715 ppm)
+L = legend('pCH_4 per Beerling+(2009)','','Revised pCH_4','FontSize',16); % 14,'Modern pN_2O (337 ppb)' 'pCH_4 (Weak \gamma_T per Zhu+2014)',
+%,'Revised Phanerozoic pCH_4 (Strong \gamma_T)',...
+%    'Revised Phanerozoic pCH_4 (No \gamma_T)' 'Revised Phanerozoic pCH_4 (Weak \gamma_T for C-cycle)',
+L.AutoUpdate = 'off';
+%title('CH_4 Partial Pressure (ppm)');
+
+box on
+
+yyaxis right
+
+%geotimescale_Mills_JFHmod_375Ma;
+%hold on
+PhanTransitions;
+
+set(gca,'XDir','reverse');
+set(gca,'xlim',[-10,375]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
+%fontsize(18,"points") % 14
+fontsize(16,"points") % 14
+%set(gca,'YTickLabel',[]);
+yticks([])
+
+nexttile
+
+yyaxis left
+
+
+%plot(TotalTime./1e6,rf.Delta_Fs,'color',colorsolar)
+%hold on
+%scatter(TotalTime(1:16)./1e6,RF_Flux.Teq_o.t(1:16) - 273.15,size,'v','MarkerFaceColor',colorCH4)
+%hold on
+%plot(TotalTime(17:end)./1e6,RF_Flux.Teq_o.t(17:end) - 273.15,'color',colorCH4)
+%hold on
+%scatter(TotalTime(1:16)./1e6,rf.RF_CH4(1:16),size,'v','MarkerFaceColor',colorCH4)
+%hold on
+%scatter(TotalTime(1:16)./1e6,rf.RF_CO2(1:16),size,'v','MarkerFaceColor',colorCO2)
+%hold on
+%
+plot(MegaTime./1e6, rf.Delta_Fs,'color',colorsolar,'LineStyle','-','LineWidth',2,'Marker','none'); % 
+hold on 
+plot(MegaTime./1e6, rf.RF_CO2,'color',colorCO2,'LineStyle','-','LineWidth',2,'Marker','none'); % includes N2O spectral overlap
+hold on
+%plot(TotalTime./1e6, rf.RF_CH4,'color',colorCH4,'LineStyle','-','LineWidth',2,'Marker','none'); % includes N2O spectral overlap
+%hold on
+%plot(MegaTime./1e6,RF_CH4.Min,'LineStyle','-','color','k','Marker','d','MarkerEdgeColor','k','MarkerFaceColor','none')
+%hold on
+%plot(MegaTime./1e6,RF_CH4.Low,'LineStyle','-','color','b','Marker','v','MarkerEdgeColor','b','MarkerFaceColor','b')
+%hold on
+plot(MegaTime./1e6,RF_CH4.High,'LineStyle','-','color','m','LineWidth',2,'Marker','none'); %'Marker','^','MarkerEdgeColor','m','MarkerFaceColor','m')
+hold on
+%plot(MegaTime./1e6,(RF_CH4.Low + rf.RF_CO2 + rf.Delta_Fs),'color',colorRFtot,'LineStyle','-','LineWidth',1,'Marker','none')
+%hold on
+plot(MegaTime./1e6,(RF_CH4.High + rf.RF_CO2 + rf.Delta_Fs),'color',colorRFtot,'LineStyle','-','LineWidth',3,'Marker','none')
+hold on
+
+%annotation('textbox',[.4 .55-0.022 .1 .1],'String','B','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
+%hold on
+%plot(-5,2.7e-7,'ok','MarkerFaceColor','k','MarkerSize',5)
+%hold on
+%plot(4500-(Gamma0.time{1}./1e6), Gamma0.RF_Flux.RF_N2O,'c','LineStyle','-','LineWidth',2,'Marker','none'); % 
+%hold on 
+%plot(4500-(GammaMinMax.time{1}./1e6), GammaMinMax.RF_Flux.RF_N2O,'r','LineStyle','--','LineWidth',2,'Marker','none'); % 
+%hold on 
+annotation('textbox',[.255 .55-0.212 .1 .1],'String','B','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
+hold on
+xline(0,'k')
+hold on
+plot(-5,0,'o','MarkerFaceColor',colorRFtot,'MarkerSize',5)
+set(gca,'XDir','reverse');
+set(gca,'xlim',[-10,375],'ylim',[-10,15]) %-9, 12 % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
+fontsize(16,"points") % 14
+pbaspect([2 1 1])
+xlabel('Age Before Present (Ma)');
+%xticklabels([]);
+ylabel('Radiative Forcing (W/m^2 Relative to PIM)')
+% 'CH_4 (Weak \gamma_T)', 
+L = legend('Solar','CO_2','CH_4',...
+        'Total','FontSize',16);
+% IN CAPTION, DISCUSS HOW CO2 and CH4 do not account for N2O RF but N2O RF (and total RF) do
+%legend('Radiative Forcing from N_2O (low crustal E_a, low emission scenario)',...
+%    'Radiative Forcing from N_2O (high crustal E_a, high emission scenario)','Radiative Forcing from N_2O (high crustal E_a, low emission scenario)',...
+%    'Radiative Forcing from N_2O (low crustal E_a, high emission scenario)','FontSize',12)
+L.AutoUpdate = 'off';
+%title('Modeled Solar and GHG Radiative Forcings')
+
+yyaxis right
+
+geotimescale_Mills_JFHmod_375Ma;
+hold on
+PhanTransitions;
+set(gca,'YTickLabel',[]);
+
+set(gca,'XDir','reverse');
+set(gca,'xlim',[-10,375]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
+%fontsize(18,"points") % 14
+fontsize(16,"points") % 14
 yticks([])
 

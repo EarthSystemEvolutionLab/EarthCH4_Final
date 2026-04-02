@@ -14,6 +14,7 @@ colorCO2 = [120,94,240]./255;
 colorCH4 = [254,97,0]./255;
 colorsolar = [255,176,0]./255;
 colorOther = [0,176,188]./255;
+Emcolor = [255,50,70]./255;
 
 % basic constants
 Constant.mia = 1.773e20; %5e18./0.029, original EarthN formula;
@@ -58,8 +59,11 @@ timeslices = flip(0:1e6:375e6).';  % time interval from
 FluxInputs = load('time_GMST_pO2_FCH4_photochemInputHiRes_updated.mat');
 %FluxCH4_min = FluxInputs.FCH4_tot_hires_BC89_min.*(0.4.*1e11.*photochem_fluxscaling)./1e12; % Tmol CH4/yr
 FluxCH4_mid = FluxInputs.FCH4_tot_hires_BC89_std.*(0.4.*1e11.*photochem_fluxscaling)./1e12; % Tmol CH4/yr
-%FluxCH4_max = FluxInputs.FCH4_tot_hires_BC89_max.*(0.4.*1e11.*photochem_fluxscaling)./1e12; % Tmol CH4/yr
-%GMST_C = FluxInputs.GMST_C_hires; % GMST
+timeFluxB09 = FluxInputs.time_CH4FluxB09.*1e9; % rescaled to yrs from Ga BP
+FluxCH4_B09 = FluxInputs.FluxCH4_B09.*(0.4.*1e11.*photochem_fluxscaling)./1e12; % Tmol CH4/yr
+FluxCH4_max = FluxInputs.FCH4_tot_hires_BC89_max.*(0.4.*1e11.*photochem_fluxscaling)./1e12; % Tmol CH4/yr
+FluxCH4_min = FluxInputs.FCH4_tot_hires_BC89_min.*(0.4.*1e11.*photochem_fluxscaling)./1e12; % Tmol CH4/yr
+%GMST_C = FluxInputs.GMST_C_hires; % GMST 
 
 %pCH4OutputsMax = load('CH4_O3_outputs_PhaneroHiRes_revisedFinal_strong_gammaT.mat'); % _5pt5MaPI
 %SoilLossMax = pCH4OutputsMax.pCH4_TauCH4_colO3_pO3tropo_surf_bound_O2flux_soilDryDepFlux(:,8).*(photochem_fluxscaling)./1e12; % Tmol CH4/yr soil loss
@@ -91,7 +95,7 @@ polyx2 = cat(1,timeslices./1e6,flip(timeslices./1e6));
 polyconst = [0, 0, 375, 375];
 
 
-tiledlayout(1,1,"TileSpacing","compact","Padding","compact")
+tiledlayout(2,1,"TileSpacing","compact","Padding","compact")
 %subplot(3,1,1)
 
 %polyFCH4em_min = cat(1,otherCH4Emissions,otherCH4Emissions,flip(FluxCH4_min));
@@ -99,7 +103,7 @@ tiledlayout(1,1,"TileSpacing","compact","Padding","compact")
 %polyCH4other_min = cat(1,otherCH4Emissions,0,0,otherCH4Emissions).'; % constant, so can plot as rectangle
 %polyFCH4soilLoss_min = cat(1,0,0,-flip(SoilLossMin)); %
 
-nexttile
+%nexttile
 
 %yyaxis left
 
@@ -168,14 +172,102 @@ nexttile
 %set(gca,'xlim',[0,375]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
 %fontsize(18,"points") % 14
 %fontsize(12,"points") % 14
+
+%figure(101);clf
+
+%lc = [0 0 0];
+%rc = [0 0 0];
+%set(figure(101),'defaultAxesColorOrder',[lc; rc]);
+%tiledlayout(1,1,"TileSpacing","compact","Padding","compact")
+
+polyFCH4em_minmax = cat(1,16.04.*FluxCH4_max./1e3,flip(16.04.*FluxCH4_min./1e3));
+
+nexttile
+
+yyaxis left
+
+size = 45;
+
+%scatter(AnchorTime./1e6,Flux_CH4_emissions_tot_lo./1e12,size,'o','MarkerFaceColor','b')
+%hold on
+%scatter(AnchorTime./1e6,Flux_CH4_emissions_tot_hi./1e12,size,'^','MarkerFaceColor','m')
+%hold on
+%scatter(AnchorTime./1e6,Flux_CH4_emissions_tot_noT./1e12,size,'d','MarkerFaceColor','g')
+%hold on
+
+%plot(timeslices./1e6,Flux_CH4_emissions_tot_hires_noT./1e12,'g','Marker','square','LineWidth',1.25)
+%hold on
+%plot(timeslices./1e6,Flux_CH4_emissions_tot_OG./1e12,'r','Marker','d','LineWidth',1.25)
+%hold on
+%plot(timeslices./1e6,Flux_CH4_emissions_BC89_hires_min./1e12,'k','Marker','d','LineWidth',1.25)
+%Flux_CH4_emissions_BC89_hires_std./1e12
+%hold on timeslices./1e6,FluxCH4_mid
+semilogy(timeFluxB09./1e6,16.04.*FluxCH4_B09./1e3,'k','Marker','o','LineWidth',1.25,'LineStyle','-')
+hold on
+%[Nx,Ny] = boundary(polyshape(polyx2,polyFCH4em_minmax));
+%patch(Nx,Ny,Emcolor) % ,'FaceColor',Emcolor,'EdgeColor',Emcolor
+plot(polyshape(polyx2,polyFCH4em_minmax),'FaceColor',Emcolor,'EdgeColor',Emcolor);
+hold on
+semilogy(timeslices./1e6,16.04.*FluxCH4_mid./1e3,'m','Marker','none','LineWidth',2,'Linestyle','-') %,'MarkerSize',3 'none' for no marker
+hold on
+%
+%plot(timeslices./1e6,Flux_CH4_emissions_BC89_hires_min./1e12,'m','Marker','none','LineWidth',1.5,'Linestyle',':')
+%hold on
+%plot(timeslices./1e6,Flux_CH4_emissions_BC89_hires_max./1e12,'m','Marker','none','LineWidth',1.5,'Linestyle',':') % 'none' for no marker
+%hold on
+%
+semilogy(-5,16.04.*1.31359e13./1e15,'o','MarkerFaceColor','k')
+hold on
+%errorbar(-5,10.162,NaN,0.92846,'Color','k','CapSize',1)
+%hold on
+
+xline([0],'-k')
+yticks([0.1, 1, 10, 100, 1000]);
+yticklabels({'0.1','1','10','100','1000'});
+%plot(4.5-(time./1e9),PGC.pH.surface,'color','r','LineStyle','-')
+set(gca,'XDir','reverse');
+set(gca,'xlim',[-10,375]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
+%set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
+%set(gca,'yaxislocation','left')
+%xlabel('Age Before Present (Ma)'); 
+ylabel('CH_4 Emissions (Pg CH_4/yr)')
+annotation('textbox',[.25 .85-0.031 .1 .1],'String','A','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
+hold on
+%ylim([-80,1400]) % [-35,650]
+%ylim([1,7000]) % [-35,650]
+ylim([0.02,100])
+%title('Global CH_4 Emissions')
+pbaspect([2 1 1])
+fontsize(16,"points") % 14   'Revised Phanerozoic CH_4 Emissions (Weak \gamma_T per Rubisco, GMST per J+24)',  'Weak \gamma_T per Zhu+(2014) & Judd+(2024)',
+L = legend('CH_4 Emissions per Beerling+(2009)','',...
+    'Revised CH_4 Emissions',...
+    'FontSize',16); % 14,'Modern pN_2O (337 ppb)'     
+% 'Revised Phanerozoic CH_4 Emissions (no \gamma_T)','Revised Phanerozoic CH_4 Emissions (\gamma_T per B+09, GMST per J+24)',...
+L.AutoUpdate = 'off';
+
+
+yyaxis right
+
+%geotimescale_Mills_JFHmod_375Ma;
+%hold on
+PhanTransitions;
+set(gca,'YTickLabel',[]);
+yticks([]);
+
+set(gca,'XDir','reverse');
+set(gca,'xlim',[-10,375]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
+fontsize(16,"points") % 14
+box on
+
+nexttile
 pbaspect([2 1 1])
 
 % %%%%%%%%%%%%%%%%%%
 
-polyFCH4em_mid = cat(1,otherCH4Emissions,otherCH4Emissions,flip(FluxCH4_mid));
-polyFCH4loss_mid = cat(1,-SoilLossMid,-flip(FluxCH4_mid)); % at steady state solution, loss = emission flux
-polyCH4other_mid = cat(1,otherCH4Emissions,0,0,otherCH4Emissions).'; % constant, so can plot as rectangle
-polyFCH4soilLoss_mid = cat(1,0,0,-flip(SoilLossMid)); %
+polyFCH4em_mid = cat(1,16.04.*otherCH4Emissions./1e3,16.04.*otherCH4Emissions./1e3,flip(16.04.*FluxCH4_mid./1e3));
+polyFCH4loss_mid = cat(1,-16.04.*SoilLossMid./1e3,-flip(16.04.*FluxCH4_mid./1e3)); % at steady state solution, loss = emission flux
+polyCH4other_mid = cat(1,16.04.*otherCH4Emissions./1e3,0,0,16.04.*otherCH4Emissions./1e3).'; % constant, so can plot as rectangle
+polyFCH4soilLoss_mid = cat(1,0,0,-flip(16.04.*SoilLossMid./1e3)); %
 
 %nexttile
 
@@ -194,13 +286,13 @@ hold on
 yline(0,'k--');
 hold on
 
-plot(timeslices./1e6,FluxCH4_mid,'g-')
+plot(timeslices./1e6,16.04.*FluxCH4_mid./1e3,'g-')
 hold on
-plot(timeslices./1e6,-FluxCH4_mid,'m-')
+plot(timeslices./1e6,-16.04.*FluxCH4_mid./1e3,'m-')
 hold on
-yline(otherCH4Emissions,'b-')
+yline(16.04.*otherCH4Emissions./1e3,'b-')
 hold on
-plot(timeslices./1e6,-SoilLossMid,'y-')
+plot(timeslices./1e6,-16.04.*SoilLossMid./1e3,'y-')
 hold on
 
 %annotation('textbox',[.34 .55-0.022-0.014+0.24 .1 .1],'String','A','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
@@ -220,17 +312,20 @@ xlabel('Age Before Present (Ma)');
 %set(gca,'YTickLabel',Zeta);
 %zoomH = zoom(gcf); 
 %set(zoomH,'ActionPostCallback',{@zoom_mypostcallback});
-ylabel('CH_4 Source and Sink Fluxes (Tmol CH_4/yr)')
-%ylim([3e-8,2e-5])
+ylabel('CH_4 Fluxes (Pg CH_4/yr)')
+annotation('textbox',[.25 .55-0.212 .1 .1],'String','B','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
+hold on
+ylim([-11,11])
+%ylim([-650,650])
 %pbaspect([5 2 2])
 
-L = legend([A, C, B, D],'Wetland CH_4 Emissions','Non-Wetland CH_4 Emissions','Atmospheric CH_4 Sinks','Soil CH_4 Sink','FontSize',20); % ,'Position',[0.5 0.7 0.1 0.1]
+L = legend([A, C, B, D],'Wetland CH_4 Emissions','Other CH_4 Emissions','Atmospheric CH_4 Sinks','Soil CH_4 Sink','FontSize',16); % ,'Position',[0.5 0.7 0.1 0.1]
 % 14,'Modern pN_2O (337 ppb)'   ,'PIM pN_2O (~0.270 ppm)'
 L.AutoUpdate = 'off';
 
-title('Phanerozoic CH_4 Budget')
+%title('Phanerozoic CH_4 Budget')
 %set(gca,'yscale','log')
-fontsize(24,"points") % 14
+fontsize(16,"points") % 14
 
 yyaxis right
 
@@ -242,5 +337,5 @@ set(gca,'YTickLabel',[]);
 set(gca,'XDir','reverse');
 set(gca,'xlim',[0,375]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
 %fontsize(20,"points") % 14
-fontsize(24,"points") % 14
+fontsize(16,"points") % 14
 pbaspect([2 1 1])
