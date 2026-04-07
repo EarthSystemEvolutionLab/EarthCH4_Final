@@ -66,16 +66,20 @@ PhanCH4vals = In_data.PhanBiomes.CH4Phanppb; % in ppb: Beerling et al. 2009 pCH4
 
 TimePhanCO2 = 1e6.*(In_data.PhanBiomes.CO2PhanTime); % converted from Ma to yrs BP
 TimePhanCO2 = cat(1,0,rmmissing(TimePhanCO2));
-if Constant.invalCO2 == 1 % nominal (median, 50th percentile)
-    PhanCO2vals = 1e-6.*In_data.PhanBiomes.CO2Phanppm; % transformation from ppm to atm abundance accounted for
-elseif Constant.invalCO2 == 2 % low (16th percentile, -sigma)
-    PhanCO2vals = 1e-6.*In_data.PhanBiomes.CO2Phanppm_16perc; 
-elseif Constant.invalCO2 == 3 % high (84th percentile, +sigma)
-    PhanCO2vals = 1e-6.*In_data.PhanBiomes.CO2Phanppm_84perc; 
-end
+%if Constant.invalCO2 == 1 % nominal (median, 50th percentile)
+PhanCO2vals = 1e-6.*In_data.PhanBiomes.CO2Phanppm; % transformation from ppm to atm abundance accounted for
+%elseif Constant.invalCO2 == 2 % low (16th percentile, -sigma)
+PhanCO2valsMin = 1e-6.*In_data.PhanBiomes.CO2Phanppm_16perc; 
+%elseif Constant.invalCO2 == 3 % high (84th percentile, +sigma)
+PhanCO2valsMax = 1e-6.*In_data.PhanBiomes.CO2Phanppm_84perc; 
+%end
 PhanCO2vals1 = rmmissing(PhanCO2vals);
+PhanCO2valsmin = rmmissing(PhanCO2valsMin);
+PhanCO2valsmax = rmmissing(PhanCO2valsMax);
 
 PhanCO2valsF = cat(1,280e-6,PhanCO2vals1);
+PhanCO2valsMinF = cat(1,280e-6,PhanCO2valsmin);
+PhanCO2valsMaxF = cat(1,280e-6,PhanCO2valsmax);
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 % Load and transform original CH4 emission model data and forcings
@@ -117,6 +121,8 @@ F_CH4_max_photochem = HiResFluxes.FCH4_tot_hires_BC89_max.*(0.4.*1e11); % conver
 
 TotalTime = HiResFluxes.timeUVb_hires.*1e9; %cat(1,AnchorFluxes.timeUVb.*1e9,HiResFluxes.timeUVb_hires.*1e9);
 TotalGMST = HiResFluxes.GMST_C_hires; %cat(1,AnchorFluxes.AnchorGMST_C,HiResFluxes.GMST_C_hires);
+TotalGMSTMax = HiResFluxes.GMST_C84;
+TotalGMSTMin = HiResFluxes.GMST_C16;
 
 %Total_pCH4 = HiRespCH4.pCH4_TauCH4_colO3_pO3tropo_surf_bound_O2flux_soilDryDepFlux(:,1); %cat(1,AnchorpCH4.pCH4_TauCH4_colO3_pO3tropo_surf_bound(:,1),HiRespCH4.pCH4_TauCH4_colO3_pO3tropo_surf_bound(:,1));
 %Total_Tau_CH4 = HiRespCH4.pCH4_TauCH4_colO3_pO3tropo_surf_bound_O2flux_soilDryDepFlux(:,2); %cat(1,AnchorpCH4.pCH4_TauCH4_colO3_pO3tropo_surf_bound(:,2),HiRespCH4.pCH4_TauCH4_colO3_pO3tropo_surf_bound(:,2));
@@ -192,6 +198,23 @@ MegaTime = flip(0:1e6:375e6).';
 
 %pCH4_Beerling = interp1(TimePhanCH4,PhanCH4vals,MegaTime,'pchip'); % ALWAYS SAME
 
+
+% CO2 range for testing
+CO2_scenario.Min = interp1(TimePhanCO2,PhanCO2valsMinF,MegaTime,'pchip');
+CO2_scenario.Mid = interp1(TimePhanCO2,PhanCO2valsF,MegaTime,'pchip');
+CO2_scenario.Max = interp1(TimePhanCO2,PhanCO2valsMaxF,MegaTime,'pchip');
+
+% CH4 range
+CH4_scenario.Min = MinEnv_pCH4;
+CH4_scenario.Mid = Total_pCH4_high;
+CH4_scenario.Max = MaxEnv_pCH4;
+
+% T Range
+GMST.Min = TotalGMSTMin;
+GMST.Mid = TotalGMST;
+GMST.Max = TotalGMSTMax;
+
+
 %% Compute Radiative Forcing (up to 100 ppm pCH4) and compare CO2-CH4-solar irradiation climate model against Judd et al. (2024) GMST reconstruction
 % modified in places from EONS (Horne and Goldblatt 2024)
     
@@ -222,34 +245,13 @@ dTstep = (284:1:350).'; % spans Phanerozoic GMST range from <11 C up to >75 C
 Wolf_875_ClimateS = readtable('All_CSV_files/Wolf+2018_pt875So_climateSensitivity_vs_surfaceT_WPD.csv');
 Wolf875_T = Wolf_875_ClimateS{:,1}; % K
 Wolf875_G = Wolf_875_ClimateS{:,2};
-Wolf875_Grefined = interp1(Wolf875_T,Wolf875_G,dTstep,"linear");
+Wolf875_Grefined = interp1(Wolf875_T,Wolf875_G,dTstep,"pchip"); % linear
 Wolf_1000_ClimateS = readtable('All_CSV_files/Wolf+2018_1So_climateSensitivity_vs_surfaceT_WPD.csv');
 Wolf1_T = Wolf_1000_ClimateS{:,1}; % K
 Wolf1_G = Wolf_1000_ClimateS{:,2}; % K/(W/m2) = C/(W/m2) 
-Wolf1_Grefined = interp1(Wolf1_T,Wolf1_G,dTstep,"linear");
+Wolf1_Grefined = interp1(Wolf1_T,Wolf1_G,dTstep,"pchip"); % linear
 
 WolfGc_matrix = cat(2,Wolf875_Grefined,Wolf1_Grefined); % forms an array
-
-% Interpolate climate sensitivity over time from So and GMST
-ClimateSensitivityK_withLuminosityEffects = interpn(dTstep,dLuminosity,WolfGc_matrix,(TotalGMST + 273.15),rf.F_solar,"linear"); 
-% unsure what other interpolation would be better
-
-ClimateSensitivityKWolf = interp1(dTstep,Wolf1_Grefined,(TotalGMST + 273.15),"linear"); 
-% linear interp of modern solar luminosity case,
-% assuming that the <4% difference in solar luminosity since the late
-% Devonian will have only a marginal effect on the climate sensitivity
-% (especially in the late Cretaceous, where the effect will be closer 1%
-% less than modern luminosity) - we thus assume that the climate
-% sensitivity is roughly applicable over the mid-late Phanerozoic, to avoid
-% additional uncertainty from interpolating (linearly?) between the
-% Proterozoic and modern luminosity cases from Wolf+2018.
-ClimateSensitivityKJudd = 1.9453; % corresponds to 8 degC per CO2 doubling per Judd+2024
-% 1.7; % 0.7742; % roughly should equal 3 deg/CO2 doubling per BG14 function (Table 2) %1.5; 
-%1.9    2; % 1.5; % 3; % 3; % climate sensitivity (deg K/(W/m^2))
-% constant for now to reproduce 1 deg C change in T per W/m^2 - Goldblatt, personal comm.
-% can make this a T-dependent power-law (or pCO2/RF dependent - cf. He et
-% al. 2023)
-% could go as high as 8 per Judd et al. 2024
 
 
 % Interpolate from Byrne and Goldblatt (2014) Fig. 5 red (1-bar) CH4
@@ -260,15 +262,36 @@ BG14_pCH4 = BG14_highpCH4_RF{:,1};
 BG14_RF_CH4 = BG14_highpCH4_RF{:,2};
 % NOT USED in nominal results
 
-hilo = {'High'}; % ,'Min' ,'Low'
+
+hilo = {'Min','Mid','Max'}; % ,'Min' ,'Low'
 for ihl = 1:length(hilo)
     HL = hilo{ihl};
 
-    CH4_scenario.High = Total_pCH4_high;
+    % Interpolate climate sensitivity over time from So and GMST
+    %ClimateSensitivityK_withLuminosityEffects.(HL) = interpn(dTstep,dLuminosity,WolfGc_matrix,(GMST.(HL) + 273.15),rf.F_solar,"linear"); 
+    % unsure what other interpolation would be better
+
+    ClimateSensitivityKWolf.(HL) = interp1(dTstep,Wolf1_Grefined,(GMST.(HL) + 273.15),'pchip');  % ,"linear",'extrap'
+    % linear interp of modern solar luminosity case,
+    % assuming that the <4% difference in solar luminosity since the late
+    % Devonian will have only a marginal effect on the climate sensitivity
+    % (especially in the late Cretaceous, where the effect will be closer 1%
+    % less than modern luminosity) - we thus assume that the climate
+    % sensitivity is roughly applicable over the mid-late Phanerozoic, to avoid
+    % additional uncertainty from interpolating (linearly?) between the
+    % Proterozoic and modern luminosity cases from Wolf+2018.
+    ClimateSensitivityKJudd = 1.9453; % corresponds to 8 degC per CO2 doubling per Judd+2024
+    % 1.7; % 0.7742; % roughly should equal 3 deg/CO2 doubling per BG14 function (Table 2) %1.5; 
+    %1.9    2; % 1.5; % 3; % 3; % climate sensitivity (deg K/(W/m^2))
+    % constant for now to reproduce 1 deg C change in T per W/m^2 - Goldblatt, personal comm.
+    % can make this a T-dependent power-law (or pCO2/RF dependent - cf. He et al. 2023)
+    % could go as high as 8 per Judd et al. 2024
+
+    
    % CH4_scenario.Low = Total_pCH4;
     % CH4_scenario.Min = Total_pCH4_min;
 
-    mr.CO2 = interp1(TimePhanCO2,PhanCO2valsF,MegaTime,'pchip'); % ALWAYS SAME
+    mr.CO2 = CO2_scenario.(HL); %interp1(TimePhanCO2,PhanCO2valsF,MegaTime,'pchip'); % ALWAYS SAME
     mr.CH4 = CH4_scenario.(HL); % Total_pCH4;
     %PGC.CH4; % 7.15e-7; % PIM constant test-case 
     % Flux.pCH4_max; % Flux.pCH4_wetlands; % Flux.pCH4_marine; %
@@ -348,14 +371,17 @@ for ihl = 1:length(hilo)
         % Note that N2O has overlap interference from both CO2 and CH4
     %end
     
+    % SETS CO2 RF for each for-loop case
     rf.RF_CO2 = rf.RF_CO2_2;
     rf.RF_CO2(rf.CO2_pm < 200e-6) = rf.RF_CO2_1(rf.CO2_pm < 200e-6); % accounts for N2O overlap
+    RF_CO2.(HL) = rf.RF_CO2;
     
     rf.RF_CH4 = rf.RF_CH4_2;
     rf.RF_CH4(rf.CH4_pm < 0.1e-6) = rf.RF_CH4_1(rf.CH4_pm < 0.1e-6);
     rf.RF_CH4(rf.CH4_pm >= 2.5e-6) = rf.RF_CH4_3(rf.CH4_pm >= 2.5e-6); % assumed that CH4 never exceeds 100 ppm! Reasonable, never above 40 ppm in Phanerozoic
-    rf.RF_CH4(rf.CH4_pm >= 100e-6) = interp1(log10(BG14_pCH4),BG14_RF_CH4,log10(rf.CH4_pm(rf.CH4_pm >= 100e-6)),'linear'); %; % accounts for N2O overlap
+    rf.RF_CH4(rf.CH4_pm >= 100e-6) = interp1(log10(BG14_pCH4),BG14_RF_CH4,log10(rf.CH4_pm(rf.CH4_pm >= 100e-6)),'linear'); %; % interpolated from Byrne and Goldblatt at >100 ppm pCH4
     
+    % SETS CH4 RF for each for-loop case
     RF_CH4.(HL) = rf.RF_CH4;
     %if ihl == 1
     %    RF_CH4.High = rf.RF_CH4;
@@ -418,20 +444,25 @@ for ihl = 1:length(hilo)
     
     
     % Calculate the equilibrium temperature from all combined GHGs excluding N2O
+
+
+
+
+    % Calculate equilibrium T with RF (solar, CO2, CH4)
+
+    % Judd+2024 Constant Climate Sensitivity
+    Teq_CH4_CO2.(HL) = T_ref + ClimateSensitivityKJudd.*(RF_CH4.(HL) + RF_CO2.(HL) + rf.Delta_Fs); % no N2O overlap, N2O at 270 ppb reference level so no overlap
+
+    Teq_CO2.(HL) = T_ref + ClimateSensitivityKJudd.*(RF_CO2.(HL) + rf.Delta_Fs); % _noN2O Teq estimate with only CO2 as GHG (no CH4, no N2O, no spectral overlap)
+
+    % Wolf+2018 T-dependent Climate Sensitivity
+    Teq_CH4_CO2Wolf.(HL) = T_ref + ClimateSensitivityKWolf.(HL).*(RF_CH4.(HL) + RF_CO2.(HL) + rf.Delta_Fs); % no N2O overlap, N2O at 270 ppb reference level so no overlap
+
+    Teq_CO2Wolf.(HL) = T_ref + ClimateSensitivityKWolf.(HL).*(RF_CO2.(HL) + rf.Delta_Fs); % _noN2O Teq estimate with only CO2 as GHG (no CH4, no N2O, no spectral overlap)
     
 
 end
-%% Calculate equilibrium T with RF (solar, CO2, CH4)
 
-% Judd+2024 Constant Climate Sensitivity
-rf.Teq_CH4_CO2.High = T_ref + ClimateSensitivityKJudd.*(RF_CH4.(HL) + rf.RF_CO2 + rf.Delta_Fs); % no N2O overlap, N2O at 270 ppb reference level so no overlap
-
-rf.Teq_CO2 = T_ref + ClimateSensitivityKJudd.*(rf.RF_CO2 + rf.Delta_Fs); % _noN2O Teq estimate with only CO2 as GHG (no CH4, no N2O, no spectral overlap)
-
-% Wolf+2018 T-dependent Climate Sensitivity
-rf.Teq_CH4_CO2.HighWolf = T_ref + ClimateSensitivityKWolf.*(RF_CH4.(HL) + rf.RF_CO2 + rf.Delta_Fs); % no N2O overlap, N2O at 270 ppb reference level so no overlap
-
-rf.Teq_CO2Wolf = T_ref + ClimateSensitivityKWolf.*(rf.RF_CO2 + rf.Delta_Fs); % _noN2O Teq estimate with only CO2 as GHG (no CH4, no N2O, no spectral overlap)
 
 
 
@@ -726,7 +757,7 @@ yyaxis left
 %
 plot(MegaTime./1e6, rf.Delta_Fs,'color',colorsolar,'LineStyle','-','LineWidth',2,'Marker','none'); % 
 hold on 
-plot(MegaTime./1e6, rf.RF_CO2,'color',colorCO2,'LineStyle','-','LineWidth',2,'Marker','none'); % includes N2O spectral overlap
+plot(MegaTime./1e6, RF_CO2.Mid,'color',colorCO2,'LineStyle','-','LineWidth',2,'Marker','none'); % includes N2O spectral overlap
 hold on
 %plot(TotalTime./1e6, rf.RF_CH4,'color',colorCH4,'LineStyle','-','LineWidth',2,'Marker','none'); % includes N2O spectral overlap
 %hold on
@@ -734,11 +765,11 @@ hold on
 %hold on
 %plot(MegaTime./1e6,RF_CH4.Low,'LineStyle','-','color','b','Marker','v','MarkerEdgeColor','b','MarkerFaceColor','b')
 %hold on
-plot(MegaTime./1e6,RF_CH4.High,'LineStyle','-','color','m','LineWidth',2,'Marker','none'); %'Marker','^','MarkerEdgeColor','m','MarkerFaceColor','m')
+plot(MegaTime./1e6,RF_CH4.Mid,'LineStyle','-','color','m','LineWidth',2,'Marker','none'); %'Marker','^','MarkerEdgeColor','m','MarkerFaceColor','m')
 hold on
 %plot(MegaTime./1e6,(RF_CH4.Low + rf.RF_CO2 + rf.Delta_Fs),'color',colorRFtot,'LineStyle','-','LineWidth',1,'Marker','none')
 %hold on
-plot(MegaTime./1e6,(RF_CH4.High + rf.RF_CO2 + rf.Delta_Fs),'color',colorRFtot,'LineStyle','-','LineWidth',3,'Marker','none')
+plot(MegaTime./1e6,(RF_CH4.Mid + RF_CO2.Mid + rf.Delta_Fs),'color',colorRFtot,'LineStyle','-','LineWidth',3,'Marker','none')
 hold on
 
 
@@ -815,13 +846,13 @@ yyaxis left
 
 L1 = plot(TotalTime./1e6, TotalGMST,'color',colorT,'LineStyle','-','LineWidth',2,'Marker','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
 hold on 
-L2 = plot(MegaTime./1e6,rf.Teq_CO2 - 273.15,'LineStyle','-','LineWidth',2,'color',colorCO2,'Marker','none');%d,'MarkerEdgeColor',colorCO2,'MarkerFaceColor',colorCO2);
+L2 = plot(MegaTime./1e6,Teq_CO2.Mid - 273.15,'LineStyle','-','LineWidth',2,'color',colorCO2,'Marker','none');%d,'MarkerEdgeColor',colorCO2,'MarkerFaceColor',colorCO2);
 hold on
 %L44 = plot(MegaTime./1e6,rf.Teq_CH4_CO2.Min - 273.15,'LineStyle','-','color','k','Marker','d','MarkerEdgeColor','k','MarkerFaceColor','none');
 %hold on
 %L3 = plot(MegaTime./1e6,rf.Teq_CH4_CO2.Low - 273.15,'LineStyle','-','color','b','Marker','v','MarkerEdgeColor','b','MarkerFaceColor','b');
 %hold on
-L4 = plot(MegaTime./1e6,rf.Teq_CH4_CO2.High - 273.15,'LineStyle','-','LineWidth',2,'color',colorRFtot,'Marker','none'); %,'Marker','^','MarkerEdgeColor','m','MarkerFaceColor','m');
+L4 = plot(MegaTime./1e6,Teq_CH4_CO2.Mid - 273.15,'LineStyle','-','LineWidth',2,'color',colorRFtot,'Marker','none'); %,'Marker','^','MarkerEdgeColor','m','MarkerFaceColor','m');
 hold on
 %L3 = plot(4500-(GammaRef.time{1}./1e6), GammaRef.RF_Flux.Teq_CO2.t - 273.15,'color',colorCO2,'LineStyle','-','LineWidth',2,'Marker','none'); % 
 %hold on
@@ -898,13 +929,13 @@ yyaxis left
 
 L1 = plot(TotalTime./1e6, TotalGMST,'color',colorT,'LineStyle','-','LineWidth',2,'Marker','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
 hold on 
-L2 = plot(MegaTime./1e6,rf.Teq_CO2Wolf - 273.15,'LineStyle','-','LineWidth',2,'color',colorCO2,'Marker','none');%d,'MarkerEdgeColor',colorCO2,'MarkerFaceColor',colorCO2);
+L2 = plot(MegaTime./1e6,Teq_CO2Wolf.Mid - 273.15,'LineStyle','-','LineWidth',2,'color',colorCO2,'Marker','none');%d,'MarkerEdgeColor',colorCO2,'MarkerFaceColor',colorCO2);
 hold on
 %L44 = plot(MegaTime./1e6,rf.Teq_CH4_CO2.Min - 273.15,'LineStyle','-','color','k','Marker','d','MarkerEdgeColor','k','MarkerFaceColor','none');
 %hold on
 %L3 = plot(MegaTime./1e6,rf.Teq_CH4_CO2.Low - 273.15,'LineStyle','-','color','b','Marker','v','MarkerEdgeColor','b','MarkerFaceColor','b');
 %hold on
-L4 = plot(MegaTime./1e6,rf.Teq_CH4_CO2.HighWolf - 273.15,'LineStyle','-','LineWidth',2,'color',colorRFtot,'Marker','none'); %^,'MarkerEdgeColor','m','MarkerFaceColor','m');
+L4 = plot(MegaTime./1e6,Teq_CH4_CO2Wolf.Mid - 273.15,'LineStyle','-','LineWidth',2,'color',colorRFtot,'Marker','none'); %^,'MarkerEdgeColor','m','MarkerFaceColor','m');
 hold on
 %L3 = plot(4500-(GammaRef.time{1}./1e6), GammaRef.RF_Flux.Teq_CO2.t - 273.15,'color',colorCO2,'LineStyle','-','LineWidth',2,'Marker','none'); % 
 %hold on
@@ -1173,7 +1204,7 @@ yyaxis left
 %
 plot(MegaTime./1e6, rf.Delta_Fs,'color',colorsolar,'LineStyle','-','LineWidth',2,'Marker','none'); % 
 hold on 
-plot(MegaTime./1e6, rf.RF_CO2,'color',colorCO2,'LineStyle','-','LineWidth',2,'Marker','none'); % includes N2O spectral overlap
+plot(MegaTime./1e6, RF_CO2.Mid,'color',colorCO2,'LineStyle','-','LineWidth',2,'Marker','none'); % includes N2O spectral overlap
 hold on
 %plot(TotalTime./1e6, rf.RF_CH4,'color',colorCH4,'LineStyle','-','LineWidth',2,'Marker','none'); % includes N2O spectral overlap
 %hold on
@@ -1181,11 +1212,11 @@ hold on
 %hold on
 %plot(MegaTime./1e6,RF_CH4.Low,'LineStyle','-','color','b','Marker','v','MarkerEdgeColor','b','MarkerFaceColor','b')
 %hold on
-plot(MegaTime./1e6,RF_CH4.High,'LineStyle','-','color','m','LineWidth',2,'Marker','none'); %'Marker','^','MarkerEdgeColor','m','MarkerFaceColor','m')
+plot(MegaTime./1e6,RF_CH4.Mid,'LineStyle','-','color','m','LineWidth',2,'Marker','none'); %'Marker','^','MarkerEdgeColor','m','MarkerFaceColor','m')
 hold on
 %plot(MegaTime./1e6,(RF_CH4.Low + rf.RF_CO2 + rf.Delta_Fs),'color',colorRFtot,'LineStyle','-','LineWidth',1,'Marker','none')
 %hold on
-plot(MegaTime./1e6,(RF_CH4.High + rf.RF_CO2 + rf.Delta_Fs),'color',colorRFtot,'LineStyle','-','LineWidth',3,'Marker','none')
+plot(MegaTime./1e6,(RF_CH4.Mid + RF_CO2.Mid + rf.Delta_Fs),'color',colorRFtot,'LineStyle','-','LineWidth',3,'Marker','none')
 hold on
 
 %annotation('textbox',[.4 .55-0.022 .1 .1],'String','B','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
@@ -1231,3 +1262,210 @@ set(gca,'xlim',[-10,375]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
 fontsize(16,"points") % 14
 yticks([])
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+figure(330332);clf
+polypGMSTminmax = cat(1,GMST.Max,flip(GMST.Min));
+polypTCO2minmax = cat(1,Teq_CO2.Max - 273.15,flip(Teq_CO2.Min - 273.15));
+polypTCH4minmax = cat(1,Teq_CH4_CO2.Max - 273.15,flip(Teq_CH4_CO2.Min - 273.15));
+polypTCO2minmaxWolf = cat(1,Teq_CO2Wolf.Max - 273.15,flip(Teq_CO2Wolf.Min - 273.15));
+polypTCH4minmaxWolf = cat(1,Teq_CH4_CO2Wolf.Max - 273.15,flip(Teq_CH4_CO2Wolf.Min - 273.15));
+
+lc = [0 0 0];
+rc = [0 0 0];
+set(figure(330332),'defaultAxesColorOrder',[lc; rc]);
+
+tiledlayout(2,1,"TileSpacing","compact","Padding","compact");
+nexttile
+
+yyaxis left
+
+%scatter(TotalTime(1:16)./1e6,rf.Teq_CO2.t(1:16) - 273.15,size,'^','MarkerFaceColor',colorCO2)
+%hold on
+%scatter(TotalTime(1:16)./1e6,rf.Teq_o.t(1:16) - 273.15,size,'v','MarkerFaceColor',colorCH4)
+%hold on
+% rf.Teq_CH4_CO2.(HL)
+
+L1 = plot(polyshape(polyx,polypGMSTminmax),'FaceColor',colorT,'EdgeColor',colorT); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
+L2 = plot(polyshape(polyx,polypTCO2minmax),'FaceColor',colorCO2,'EdgeColor',colorCO2);%d,'MarkerEdgeColor',colorCO2,'MarkerFaceColor',colorCO2);
+hold on
+%L44 = plot(MegaTime./1e6,rf.Teq_CH4_CO2.Min - 273.15,'LineStyle','-','color','k','Marker','d','MarkerEdgeColor','k','MarkerFaceColor','none');
+%hold on
+%L3 = plot(MegaTime./1e6,rf.Teq_CH4_CO2.Low - 273.15,'LineStyle','-','color','b','Marker','v','MarkerEdgeColor','b','MarkerFaceColor','b');
+%hold on
+L4 = plot(polyshape(polyx,polypTCH4minmax),'FaceColor',colorRFtot,'EdgeColor',colorRFtot); %,'Marker','^','MarkerEdgeColor','m','MarkerFaceColor','m');
+hold on
+%L3 = plot(4500-(GammaRef.time{1}./1e6), GammaRef.RF_Flux.Teq_CO2.t - 273.15,'color',colorCO2,'LineStyle','-','LineWidth',2,'Marker','none'); % 
+%hold on
+%L4 = plot(4500-(GammaRef.time{1}./1e6), GammaRef.RF_Flux.Teq_o.t - 273.15,'color',colorCH4,'LineStyle','-','LineWidth',2,'Marker','none'); % 
+%hold on
+L5 = plot(-2.5,14,'o','MarkerFaceColor',colorT,'MarkerSize',5);
+hold on
+%plot(4500-(Gamma0.time{1}./1e6),(Gamma0.RF_Flux.Teq_N.t - 273.15),'color',colorRFtot,'LineStyle','-','LineWidth',1,'Marker','none');
+%hold on
+%plot(4500-(Gamma100.time{1}./1e6),(Gamma100.RF_Flux.Teq_N.t - 273.15),'color',colorRFtot,'LineStyle','-','LineWidth',1,'Marker','none');
+%hold on
+%plot(polyshape(polyx,polyClim),'FaceColor',colorRFtotrange)
+%hold on
+%L1 = plot(4500-(GammaRef.time{1}./1e6),(GammaRef.RF_Flux.Teq_N.t - 273.15),'color',colorRFtot,'LineStyle','-','LineWidth',2,'Marker','none');
+%hold on
+%annotation('textbox',[.4 .25-0.033-0.0045 .1 .1],'String','C','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
+%hold on
+%plot(4500-(Gamma0.time{1}./1e6), Gamma0.RF_Flux.Teq_N.t - 273.15,'c','LineStyle','-','LineWidth',2,'Marker','none'); % 
+%hold on 
+%plot(4500-(Gamma100.time{1}./1e6), Gamma100.RF_Flux.Teq_N.t - 273.15,'r','LineStyle','-','LineWidth',2,'Marker','none'); % 
+%hold on
+%plot(4500-(GammaMaxMin.time{1}./1e6), GammaMaxMin.RF_Flux.Teq_N.t - 273.15,'c','LineStyle','--','LineWidth',2,'Marker','none'); % 
+%hold on 
+%plot(4500-(GammaMinMax.time{1}./1e6), GammaMinMax.RF_Flux.Teq_N.t - 273.15,'r','LineStyle','--','LineWidth',2,'Marker','none'); % 
+%hold on 
+xline(0,'k')
+%hold on
+%plot(4500-(GammaRef.time{1}./1e6), GammaRef.RF_Flux.Teq_o.t - 273.15,'color',colorCO2,'LineStyle','--','LineWidth',2,'Marker','none'); % 
+%hold on
+set(gca,'XDir','reverse');
+set(gca,'xlim',[-5,375],'ylim',[0,50]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
+annotation('textbox',[.22 .85-0.031 .1 .1],'String','A','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
+hold on
+
+pbaspect([5 2 2])
+%xlabel('Age Before Present (Ma)'); 
+ylabel('GMST (^\circC)') % ,'Solar + CO_2 + Weak CH_4 \gamma_T',
+%L = legend([L1, L2, L4, L5],'GMST Forcing (Judd+2024)','Solar + CO_2 only','Solar + CO_2 + CH_4','Preindustrial GMST (14^oC)','FontSize',20); % 'CO_2 + Low CH_4',
+%L = legend([L2, L3, L4, L1],'GMST Forcing','CO_2 only','CO_2 and CH_4 only',...
+%    'CO_2, CH_4, and N_2O','FontSize',12,'Position',[0.5+0.01 0.1+0.01 0.1 0.08]); % 
+%L = legend('','','','CO_2, CH_4, and N_2O','GMST Forcing Prior (J+24)','CO_2 only','CO_2 and CH_4 only','FontSize',10); % ,...
+ %   'Climate History with CO_2, CH_4, and N_2O (high crustal E_a, high emission scenario)','Climate History with CO_2, CH_4, and N_2O (high crustal E_a, low emission scenario)',...
+ %   'Climate History with CO_2, CH_4, and N_2O (low crustal E_a, high emission scenario)','FontSize',12)
+%L.AutoUpdate = 'off';
+title('Constant Phanerozoic Climate Sensitivity (Judd+2024)')
+% (\Gamma_c = 1.7 K/(W/m^2)), assuming Beerling et al. [2009] pCH_4)
+fontsize(20,"points") % 14
+
+yyaxis right
+
+%geotimescale_Mills_JFHmod_375Ma;
+%hold on
+PhanTransitions;
+set(gca,'YTickLabel',[]);
+
+set(gca,'XDir','reverse');
+set(gca,'xlim',[-5,375]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
+%fontsize(18,"points") % 14
+fontsize(20,"points") % 14
+yticks([])
+
+
+
+
+nexttile
+
+yyaxis left
+
+%scatter(TotalTime(1:16)./1e6,rf.Teq_CO2.t(1:16) - 273.15,size,'^','MarkerFaceColor',colorCO2)
+%hold on
+%scatter(TotalTime(1:16)./1e6,rf.Teq_o.t(1:16) - 273.15,size,'v','MarkerFaceColor',colorCH4)
+%hold on
+% rf.Teq_CH4_CO2.(HL)
+
+L1 = plot(polyshape(polyx,polypGMSTminmax),'FaceColor',colorT,'EdgeColor',colorT); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
+L2 = plot(polyshape(polyx,polypTCO2minmaxWolf),'FaceColor',colorCO2,'EdgeColor',colorCO2);%d,'MarkerEdgeColor',colorCO2,'MarkerFaceColor',colorCO2);
+hold on
+%L44 = plot(MegaTime./1e6,rf.Teq_CH4_CO2.Min - 273.15,'LineStyle','-','color','k','Marker','d','MarkerEdgeColor','k','MarkerFaceColor','none');
+%hold on
+%L3 = plot(MegaTime./1e6,rf.Teq_CH4_CO2.Low - 273.15,'LineStyle','-','color','b','Marker','v','MarkerEdgeColor','b','MarkerFaceColor','b');
+%hold on
+L4 = plot(polyshape(polyx,polypTCH4minmaxWolf),'FaceColor',colorRFtot,'EdgeColor',colorRFtot); %^,'MarkerEdgeColor','m','MarkerFaceColor','m');
+hold on
+%L3 = plot(4500-(GammaRef.time{1}./1e6), GammaRef.RF_Flux.Teq_CO2.t - 273.15,'color',colorCO2,'LineStyle','-','LineWidth',2,'Marker','none'); % 
+%hold on
+%L4 = plot(4500-(GammaRef.time{1}./1e6), GammaRef.RF_Flux.Teq_o.t - 273.15,'color',colorCH4,'LineStyle','-','LineWidth',2,'Marker','none'); % 
+%hold on
+L5 = plot(-2.5,14,'o','MarkerFaceColor',colorT,'MarkerSize',5);
+hold on
+%plot(4500-(Gamma0.time{1}./1e6),(Gamma0.RF_Flux.Teq_N.t - 273.15),'color',colorRFtot,'LineStyle','-','LineWidth',1,'Marker','none');
+%hold on
+%plot(4500-(Gamma100.time{1}./1e6),(Gamma100.RF_Flux.Teq_N.t - 273.15),'color',colorRFtot,'LineStyle','-','LineWidth',1,'Marker','none');
+%hold on
+%plot(polyshape(polyx,polyClim),'FaceColor',colorRFtotrange)
+%hold on
+%L1 = plot(4500-(GammaRef.time{1}./1e6),(GammaRef.RF_Flux.Teq_N.t - 273.15),'color',colorRFtot,'LineStyle','-','LineWidth',2,'Marker','none');
+%hold on
+%annotation('textbox',[.4 .25-0.033-0.0045 .1 .1],'String','C','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
+%hold on
+%plot(4500-(Gamma0.time{1}./1e6), Gamma0.RF_Flux.Teq_N.t - 273.15,'c','LineStyle','-','LineWidth',2,'Marker','none'); % 
+%hold on 
+%plot(4500-(Gamma100.time{1}./1e6), Gamma100.RF_Flux.Teq_N.t - 273.15,'r','LineStyle','-','LineWidth',2,'Marker','none'); % 
+%hold on
+%plot(4500-(GammaMaxMin.time{1}./1e6), GammaMaxMin.RF_Flux.Teq_N.t - 273.15,'c','LineStyle','--','LineWidth',2,'Marker','none'); % 
+%hold on 
+%plot(4500-(GammaMinMax.time{1}./1e6), GammaMinMax.RF_Flux.Teq_N.t - 273.15,'r','LineStyle','--','LineWidth',2,'Marker','none'); % 
+%hold on 
+xline(0,'k')
+%hold on
+%plot(4500-(GammaRef.time{1}./1e6), GammaRef.RF_Flux.Teq_o.t - 273.15,'color',colorCO2,'LineStyle','--','LineWidth',2,'Marker','none'); % 
+%hold on
+set(gca,'XDir','reverse');
+set(gca,'xlim',[-5,375],'ylim',[0,50]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
+annotation('textbox',[.22 .55-0.212 .1 .1],'String','B','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
+hold on
+
+pbaspect([5 2 2])
+xlabel('Age Before Present (Ma)'); 
+ylabel('GMST (^\circC)') % ,'Solar + CO_2 + Weak CH_4 \gamma_T',
+L = legend([L1, L2, L4, L5],'GMST Prior','Solar + CO_2 only','Solar + CO_2 + CH_4','FontSize',20); % 'CO_2 + Low CH_4', ,'PI GMST (14^oC)'
+%L = legend([L2, L3, L4, L1],'GMST Forcing','CO_2 only','CO_2 and CH_4 only',...
+%    'CO_2, CH_4, and N_2O','FontSize',12,'Position',[0.5+0.01 0.1+0.01 0.1 0.08]); % 
+%L = legend('','','','CO_2, CH_4, and N_2O','GMST Forcing Prior (J+24)','CO_2 only','CO_2 and CH_4 only','FontSize',10); % ,...
+ %   'Climate History with CO_2, CH_4, and N_2O (high crustal E_a, high emission scenario)','Climate History with CO_2, CH_4, and N_2O (high crustal E_a, low emission scenario)',...
+ %   'Climate History with CO_2, CH_4, and N_2O (low crustal E_a, high emission scenario)','FontSize',12)
+L.AutoUpdate = 'off';
+title('GMST-Dependent Climate Sensitivity (Wolf+2018)')
+% (\Gamma_c = 1.7 K/(W/m^2)), assuming Beerling et al. [2009] pCH_4)
+fontsize(20,"points") % 14
+
+yyaxis right
+
+geotimescale_Mills_JFHmod_375Ma;
+hold on
+PhanTransitions;
+set(gca,'YTickLabel',[]);
+
+set(gca,'XDir','reverse');
+set(gca,'xlim',[-5,375]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
+%fontsize(18,"points") % 14
+fontsize(20,"points") % 14
+yticks([])
