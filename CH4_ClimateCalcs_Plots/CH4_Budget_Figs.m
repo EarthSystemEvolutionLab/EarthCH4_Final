@@ -15,6 +15,7 @@ colorCH4 = [254,97,0]./255;
 colorsolar = [255,176,0]./255;
 colorOther = [0,176,188]./255;
 Emcolor = [255,50,70]./255;
+KPgcolor = [255, 190, 0]./255;
 
 % basic constants
 Constant.mia = 1.773e20; %5e18./0.029, original EarthN formula;
@@ -81,7 +82,12 @@ O2rainoutMid = pCH4OutputsMid.pCH4_TauCH4_colO3_pO3tropo_surf_bound_O2flux_soilD
 
 
 
+%polyx = cat(1,MegaTime./1e6,flip(MegaTime./1e6)); % for polyshape ranges
 
+polyK = [33.9, 33.9, 149.24, 149.24]; % constant, so can plot as rectangle
+polyKPg = cat(1,0, 48, 48, 0).'; % constant, so can plot as rectangle
+polyKPgrf = cat(1,-10000, 10000, 10000, -10000).'; % constant, so can plot as rectangle
+polyKPglog = cat(1,0.00001, 1000, 1000, 0.00001).'; % constant, so can plot as rectangle
 
 
 figure(333);clf
@@ -188,6 +194,10 @@ yyaxis left
 
 size = 45;
 
+semilogy(-5,16.04.*1.31359e13./1e15,'o','MarkerFaceColor','k')
+hold on
+plot(polyshape(polyK,polyKPglog),'FaceColor',KPgcolor,'EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
 %scatter(AnchorTime./1e6,Flux_CH4_emissions_tot_lo./1e12,size,'o','MarkerFaceColor','b')
 %hold on
 %scatter(AnchorTime./1e6,Flux_CH4_emissions_tot_hi./1e12,size,'^','MarkerFaceColor','m')
@@ -206,9 +216,9 @@ semilogy(timeFluxB09./1e6,16.04.*FluxCH4_B09./1e3,'k','Marker','o','LineWidth',1
 hold on
 %[Nx,Ny] = boundary(polyshape(polyx2,polyFCH4em_minmax));
 %patch(Nx,Ny,Emcolor) % ,'FaceColor',Emcolor,'EdgeColor',Emcolor
-plot(polyshape(polyx2,polyFCH4em_minmax),'FaceColor',Emcolor,'EdgeColor',Emcolor);
+plot(polyshape(polyx2,polyFCH4em_minmax),'FaceColor',colorCH4,'EdgeColor','none');
 hold on
-semilogy(timeslices./1e6,16.04.*FluxCH4_mid./1e3,'m','Marker','none','LineWidth',2,'Linestyle','-') %,'MarkerSize',3 'none' for no marker
+semilogy(timeslices./1e6,16.04.*FluxCH4_mid./1e3,'color',colorCH4,'Marker','none','LineWidth',2,'Linestyle','-') %,'MarkerSize',3 'none' for no marker
 hold on
 %
 %plot(timeslices./1e6,Flux_CH4_emissions_BC89_hires_min./1e12,'m','Marker','none','LineWidth',1.5,'Linestyle',':')
@@ -216,8 +226,6 @@ hold on
 %plot(timeslices./1e6,Flux_CH4_emissions_BC89_hires_max./1e12,'m','Marker','none','LineWidth',1.5,'Linestyle',':') % 'none' for no marker
 %hold on
 %
-semilogy(-5,16.04.*1.31359e13./1e15,'o','MarkerFaceColor','k')
-hold on
 %errorbar(-5,10.162,NaN,0.92846,'Color','k','CapSize',1)
 %hold on
 
@@ -239,7 +247,7 @@ ylim([0.02,100])
 %title('Global CH_4 Emissions')
 pbaspect([2 1 1])
 fontsize(16,"points") % 14   'Revised Phanerozoic CH_4 Emissions (Weak \gamma_T per Rubisco, GMST per J+24)',  'Weak \gamma_T per Zhu+(2014) & Judd+(2024)',
-L = legend('CH_4 Emissions per Beerling+(2009)','',...
+L = legend('','','CH_4 Emissions per Beerling+(2009)','',...
     'Revised CH_4 Emissions',...
     'FontSize',16); % 14,'Modern pN_2O (337 ppb)'     
 % 'Revised Phanerozoic CH_4 Emissions (no \gamma_T)','Revised Phanerozoic CH_4 Emissions (\gamma_T per B+09, GMST per J+24)',...
@@ -272,6 +280,9 @@ polyFCH4soilLoss_mid = cat(1,0,0,-flip(16.04.*SoilLossMid./1e3)); %
 %nexttile
 
 yyaxis left
+
+plot(polyshape(polyK,polyKPgrf),'FaceColor',KPgcolor,'EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
 
 A = plot(polyshape(polyx,polyFCH4em_mid),'FaceColor','g');
 hold on
@@ -339,3 +350,109 @@ set(gca,'xlim',[0,375]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
 %fontsize(20,"points") % 14
 fontsize(16,"points") % 14
 pbaspect([2 1 1])
+
+
+
+
+
+
+
+
+
+
+
+
+
+figure(101);clf
+
+lc = [0 0 0];
+rc = [0 0 0];
+set(figure(101),'defaultAxesColorOrder',[lc; rc]);
+tiledlayout(1,1,"TileSpacing","compact","Padding","compact")
+
+polyFCH4em_minmax = cat(1,16.04.*FluxCH4_max./1e3,flip(16.04.*FluxCH4_min./1e3));
+
+
+
+% %%%%%%%%%%%%%%%%%%
+
+polyFCH4em_mid = cat(1,16.04.*otherCH4Emissions./1e3,16.04.*otherCH4Emissions./1e3,flip(16.04.*FluxCH4_mid./1e3));
+polyFCH4loss_mid = cat(1,-16.04.*SoilLossMid./1e3,-flip(16.04.*FluxCH4_mid./1e3)); % at steady state solution, loss = emission flux
+polyCH4other_mid = cat(1,16.04.*otherCH4Emissions./1e3,0,0,16.04.*otherCH4Emissions./1e3).'; % constant, so can plot as rectangle
+polyFCH4soilLoss_mid = cat(1,0,0,-flip(16.04.*SoilLossMid./1e3)); %
+
+nexttile
+
+yyaxis left
+
+plot(polyshape(polyK,polyKPgrf),'FaceColor',KPgcolor,'EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
+
+A = plot(polyshape(polyx,polyFCH4em_mid),'FaceColor','g');
+hold on
+B = plot(polyshape(polyx2,polyFCH4loss_mid),'FaceColor','m');
+hold on
+
+C = plot(polyshape(polyconst,polyCH4other_mid),'FaceColor','b');
+hold on
+D = plot(polyshape(polyx,polyFCH4soilLoss_mid),'FaceColor','y');
+hold on
+
+yline(0,'k--');
+hold on
+
+plot(timeslices./1e6,16.04.*FluxCH4_mid./1e3,'g-')
+hold on
+plot(timeslices./1e6,-16.04.*FluxCH4_mid./1e3,'m-')
+hold on
+yline(16.04.*otherCH4Emissions./1e3,'b-')
+hold on
+plot(timeslices./1e6,-16.04.*SoilLossMid./1e3,'y-')
+hold on
+
+%annotation('textbox',[.34 .55-0.022-0.014+0.24 .1 .1],'String','A','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
+%hold on
+
+set(gca,'XDir','reverse');
+set(gca,'xlim',[0,375]) % ,'ylim',[0.2,8]
+% ,'xtick',time_ticks,'ylim',[0,1.5e5]
+%fontsize(8,"points") % 14
+%set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
+%set(gca,'yaxislocation','left')
+xlabel('Age Before Present (Ma)'); 
+%xticklabels([]);
+%yticks([0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 5, 6]);
+%yticklabels({'0.2','','','0.5','','','','','1','2','','','5',''});
+%Zeta = get(gca,'ytick');
+%set(gca,'YTickLabel',Zeta);
+%zoomH = zoom(gcf); 
+%set(zoomH,'ActionPostCallback',{@zoom_mypostcallback});
+ylabel('CH_4 Fluxes (Pg CH_4/yr)')
+%annotation('textbox',[.25 .55-0.212 .1 .1],'String','B','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
+hold on
+ylim([-11,11])
+%ylim([-650,650])
+%pbaspect([5 2 2])
+
+L = legend([A, C, B, D],'Wetland CH_4 Emissions','Other CH_4 Emissions','Atmospheric CH_4 Sinks','Soil CH_4 Sink','FontSize',16); % ,'Position',[0.5 0.7 0.1 0.1]
+% 14,'Modern pN_2O (337 ppb)'   ,'PIM pN_2O (~0.270 ppm)'
+L.AutoUpdate = 'off';
+
+%title('Phanerozoic CH_4 Budget')
+%set(gca,'yscale','log')
+fontsize(16,"points") % 14
+
+yyaxis right
+
+geotimescale_Mills_JFHmod_375Ma;
+hold on
+PhanTransitions;
+set(gca,'YTickLabel',[]);
+
+set(gca,'XDir','reverse');
+set(gca,'xlim',[0,375]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
+%fontsize(20,"points") % 14
+fontsize(28,"points") % 14
+pbaspect([2 1 1])
+
+box on
