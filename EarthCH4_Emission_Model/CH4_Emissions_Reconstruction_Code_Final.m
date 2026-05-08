@@ -19,6 +19,7 @@ colorCO2 = [120,94,240]./255;
 colorCH4 = [254,97,0]./255;
 colorsolar = [255,176,0]./255;
 darkgreen = [0,130,0]./255;
+KPgcolor = [255, 190, 0]./255;
 
 % basic constants
 
@@ -356,6 +357,17 @@ save("time_GMST_pO2_FCH4_photochemInputPleisto.mat",'timeUVb_Pleisto5ka', 'GMST_
 
 %% Output Figures
 
+polyx = cat(1,timeslices./1e6,flip(timeslices./1e6)); % for polyshape ranges
+polyT = cat(1,GMST_C84,flip(GMST_C16));%.';
+polyO2 = cat(1,pO2_max,flip(pO2_min));%.';
+polyAcoal = cat(1,Phanero_Awet_Rel_hi,flip(Phanero_Awet_Rel_lo));%.';
+polygT = cat(1,gamma_T_CH4_hires_maxEa,flip(gamma_T_CH4_hires_minEa));%.';
+
+polyconst = [33.9, 33.9, 149.24, 149.24]; % constant, so can plot as rectangle
+polyKPg = cat(1,-5, 48, 48, -5).'; % constant, so can plot as rectangle
+polyKPgrf = cat(1,-20, 1000, 1000, -20).'; % constant, so can plot as rectangle
+polyKPglog = cat(1,0.00001, 1000, 1000, 0.00001).'; % constant, so can plot as rectangle
+
 figure(101);clf
 
 lc = [0 0 0];
@@ -375,6 +387,8 @@ size = 45;
 %hold on
 %scatter(AnchorTime./1e6,Flux_CH4_emissions_tot_noT./1e12,size,'d','MarkerFaceColor','g')
 %hold on
+%plot(polyshape(polyconst,polyKPg),'FaceColor',KPgcolor,'EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+%hold on 
 
 plot(CH4fluxtime./1e6,CH4flux./1e12,'k','Marker','o','LineWidth',1.25)
 hold on
@@ -531,7 +545,8 @@ size = 45;
 %hold on
 %scatter(AnchorTime./1e6,Flux_CH4_emissions_tot_noT./1e12,size,'d','MarkerFaceColor','g')
 %hold on
-
+plot(polyshape(polyconst,polyKPg),'FaceColor',KPgcolor,'EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
 %plot(CH4fluxtime./1e6,CH4flux./1e12,'k','Marker','o','LineWidth',1.25)
 %hold on
 %plot(timeslices./1e6,Flux_CH4_emissions_tot_hires_noT./1e12,'g','Marker','square','LineWidth',1.25)
@@ -601,6 +616,8 @@ size = 45;
 %hold on
 %plot(timeslices./1e6,Flux_CH4_emissions_tot_OG./1e12,'r','Marker','d','LineWidth',1.25)
 %hold on
+plot(polyshape(polyconst,polyKPg),'FaceColor',KPgcolor,'EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
 plot(timeslices/1e6,pO2_hires,'b','LineStyle','-','LineWidth',1.25)
 hold on
 plot(timeslices/1e6,pO2_min,'b','LineStyle',':','LineWidth',1.25)
@@ -664,6 +681,8 @@ size = 45;
 %hold on
 %plot(timeslices./1e6,Flux_CH4_emissions_tot_OG./1e12,'r','Marker','d','LineWidth',1.25)
 %hold on
+plot(polyshape(polyconst,polyKPg),'FaceColor',KPgcolor,'EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
 plot(timeslices/1e6,Phanero_Awet_Rel_BC89,'Color',darkgreen,'LineStyle','-','LineWidth',1.25)
 hold on
 %
@@ -782,12 +801,16 @@ size = 45;
 %hold on
 %plot(timeslices./1e6,Flux_CH4_emissions_tot_OG./1e12,'r','Marker','d','LineWidth',1.25)
 %hold on
-plot(timeslices./1e6,GMST_C_hires,'r','LineStyle','-','LineWidth',1.25)
+plot(polyshape(polyconst,polyKPg),'FaceColor',KPgcolor,'EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
+plot(polyshape(polyx,polyT),'FaceColor','k','EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
+plot(timeslices./1e6,GMST_C_hires,'k','LineStyle','-','LineWidth',1.25)
 hold on
-plot(timeslices./1e6,GMST_C16,'r','LineStyle',':','LineWidth',1.25)
-hold on
-plot(timeslices./1e6,GMST_C84,'r','LineStyle',':','LineWidth',1.25)
-hold on
+%plot(timeslices./1e6,GMST_C16,'r','LineStyle',':','LineWidth',1.25)
+%hold on
+%plot(timeslices./1e6,GMST_C84,'r','LineStyle',':','LineWidth',1.25)
+%hold on
 scatter(-5,14,'o','MarkerFaceColor','r')
 hold on
 %errorbar(-5,10.162,NaN,0.92846,'Color','k','CapSize',1)
@@ -845,12 +868,16 @@ size = 45;
 %hold on
 %plot(timeslices./1e6,Flux_CH4_emissions_tot_OG./1e12,'r','Marker','d','LineWidth',1.25)
 %hold on
+plot(polyshape(polyconst,polyKPg),'FaceColor',KPgcolor,'EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
+plot(polyshape(polyx,polyO2),'FaceColor','b','EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
 plot(timeslices/1e6,pO2_hires,'b','LineStyle','-','LineWidth',1.25)
 hold on
-plot(timeslices/1e6,pO2_min,'b','LineStyle',':','LineWidth',1.25)
-hold on
-plot(timeslices/1e6,pO2_max,'b','LineStyle',':','LineWidth',1.25)
-hold on
+%plot(timeslices/1e6,pO2_min,'b','LineStyle',':','LineWidth',1.25)
+%hold on
+%plot(timeslices/1e6,pO2_max,'b','LineStyle',':','LineWidth',1.25)
+%hold on
 scatter(-5,1,'o','MarkerFaceColor','b')
 hold on
 annotation('textbox',[.28 .598 .1 .1],'String','B','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
@@ -908,13 +935,17 @@ size = 45;
 %hold on
 %plot(timeslices./1e6,Flux_CH4_emissions_tot_OG./1e12,'r','Marker','d','LineWidth',1.25)
 %hold on
+plot(polyshape(polyconst,polyKPg),'FaceColor',KPgcolor,'EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
+plot(polyshape(polyx,polyAcoal),'FaceColor',darkgreen,'EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
 plot(timeslices/1e6,Phanero_Awet_Rel_BC89,'Color',darkgreen,'LineStyle','-','LineWidth',1.25)
 hold on
 %
-plot(timeslices/1e6,Phanero_Awet_Rel_lo,'Color',darkgreen,'LineStyle',':','LineWidth',1.25)
-hold on
-plot(timeslices/1e6,Phanero_Awet_Rel_hi,'Color',darkgreen,'LineStyle',':','LineWidth',1.25)
-hold on
+%plot(timeslices/1e6,Phanero_Awet_Rel_lo,'Color',darkgreen,'LineStyle',':','LineWidth',1.25)
+%hold on
+%plot(timeslices/1e6,Phanero_Awet_Rel_hi,'Color',darkgreen,'LineStyle',':','LineWidth',1.25)
+%hold on
 %
 scatter(-5,1,'o','MarkerFaceColor',darkgreen)
 hold on
@@ -976,12 +1007,16 @@ size = 45;
 %hold on
 %plot(timeslices./1e6,gamma_T_CH4_hires_min,'b-','Marker','v','LineWidth',1.25)
 %hold on
+plot(polyshape(polyconst,polyKPg),'FaceColor',KPgcolor,'EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
+plot(polyshape(polyx,polygT),'FaceColor','m','EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
 plot(timeslices./1e6,gamma_T_CH4_hires_std,'m-','Marker','none','LineWidth',1.25)%, 'MarkerSize',3) % 'none' for no marker
 hold on
-plot(timeslices./1e6,gamma_T_CH4_hires_maxEa,'m:','Marker','none','LineWidth',1.25) % 'none' for no marker
-hold on
-plot(timeslices./1e6,gamma_T_CH4_hires_minEa,'m:','Marker','none','LineWidth',1.25) % 'none' for no marker
-hold on
+%plot(timeslices./1e6,gamma_T_CH4_hires_maxEa,'m:','Marker','none','LineWidth',1.25) % 'none' for no marker
+%hold on
+%plot(timeslices./1e6,gamma_T_CH4_hires_minEa,'m:','Marker','none','LineWidth',1.25) % 'none' for no marker
+%hold on
 %plot(timeslices./1e6,gamma_T_CH4_Beerling,'k-','Marker','o','LineWidth',1.25) % 'none' for no marker
 %hold on
 scatter(-5,1,'o','MarkerFaceColor','m','MarkerEdgeColor','k')
@@ -1066,3 +1101,64 @@ L.AutoUpdate = 'off';
 
 box on
 
+
+
+
+
+
+figure(6012);clf
+lc = [0 0 0];
+rc = [0 0 0];
+set(figure(6012),'defaultAxesColorOrder',[lc; rc]);
+
+
+tiledlayout(1,1,"TileSpacing","compact","Padding","compact")
+%subplot(3,1,1)
+
+nexttile
+
+yyaxis left
+size = 45;
+
+plot(polyshape(polyconst,polyKPg),'FaceColor',KPgcolor,'EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+hold on 
+
+plot(timeslices./1e6,Phanero_landA./Phanero_landA(end),'c-','Marker','none','LineWidth',1.25) % 'none' for no marker
+hold on
+plot(timeslices./1e6,Phanero_fwet_BC89./Phanero_fwet_BC89(end),'g-','Marker','none','LineWidth',1.25) % 'none' for no marker
+hold on
+plot(timeslices./1e6,Phanero_Awet_Rel_BC89,'color',darkgreen,'Marker','none','LineWidth',2) % 'none' for no marker
+hold on
+scatter(-5,1,'MarkerFaceColor','k','MarkerEdgeColor','k','Marker','o') % 'none' for no marker
+hold on
+xline([0],'-k')
+%hold on
+%yline([1],'--k')
+%plot(4.5-(time./1e9),PGC.pH.surface,'color','r','LineStyle','-')
+%set(gca,'XDir','reverse');
+%set(gca,'xlim',[-10,800]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
+%set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
+%set(gca,'yaxislocation','left')
+xlabel('Age Before Present (Ma)'); ylabel('Relative Units (normalized to PI)')
+set(gca,'XDir','reverse');
+set(gca,'xlim',[-10,375],'ylim',[-0.45,8]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
+%xlim([12,36])
+%pbaspect([3 1 1])
+fontsize(18,"points") % 14 ,'Revised Phanerozoic CH_4 Emissions (Weak \gamma_T)',
+L = legend('','A_{land} (Global Land Area)','f_{coal} (Coal Wetland Fraction of Land Area)','\Gamma_{coal} (Global Coal Wetland Area)',...
+    'FontSize',18); % 14,'Modern pN_2O (337 ppb)'
+L.AutoUpdate = 'off';
+
+yyaxis right
+
+geotimescale_Mills_JFHmod_375Ma;
+hold on
+PhanTransitions;
+set(gca,'YTickLabel',[]);
+yticks([]);
+
+set(gca,'XDir','reverse');
+set(gca,'xlim',[-10,375]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
+fontsize(24,"points") % 14
+
+box on
