@@ -15,3 +15,5 @@ To run the Python scripts, activate your environment ("conda activate [env]", wh
 You can demo the Matlab figure generation scripts using the nominal data files supplied in the CH4_ClimateCalcs_Plots/pCH4_PhotochemOutputs folder, or run the emissions model to feed through the photochemical scripts to regenerate the nominal data files given. To demo the photochemical codes, you can test-run one of the CH4_Holmes...Vdep.py scripts, as these are relatively quick to complete (should be <6 hours) compared to a full 375 Ma model time-series.
 
 Please feel free to contact the developers (John Herring: herring3@iastate.edu or Ben Johnson: bwj@iastate.edu) with any questions or to request alternative or updated versions of any files (e.g., Jupyter Notebook versions of the Python scripts).
+
+Note: core code and input files for Photochem scripts herein were shared by Nicholas Wogan (https://github.com/Nicholaswogan/photochem). We also modify the geotimescale.m file created by Ben Mills (https://github.com/bjwmills/geotimescale) for use in our plots.
