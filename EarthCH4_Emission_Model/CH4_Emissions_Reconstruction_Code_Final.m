@@ -281,6 +281,9 @@ Flux_CH4_emissions_BC89_hires_minEa = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_
 Flux_CH4_emissions_BC89_hires_maxEa = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_BC89.*gamma_T_CH4_hires_maxEa + PI_otherCH4Emissions; 
 Flux_CH4_emissions_BC89_hires_minCoal = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_lo.*gamma_T_CH4_hires_std + PI_otherCH4Emissions; % only Gamma_coal changes vs. nominal
 Flux_CH4_emissions_BC89_hires_maxCoal = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_hi.*gamma_T_CH4_hires_std + PI_otherCH4Emissions; 
+Flux_CH4_emissions_BC89_hires_stdNoCoal = PIWetlandRefEmissionCH4.*1.*gamma_T_CH4_hires_std + PI_otherCH4Emissions; 
+Flux_CH4_emissions_BC89_hires_minNoCoal = PIWetlandRefEmissionCH4.*1.*gamma_T_CH4_hires_minEaloT + PI_otherCH4Emissions; % Ea_CH4, Gamma_coal, and T forcing all change vs. nominal
+Flux_CH4_emissions_BC89_hires_maxNoCoal = PIWetlandRefEmissionCH4.*1.*gamma_T_CH4_hires_maxEahiT + PI_otherCH4Emissions;
 
 FCH4_tot_hires_BC89_std = Flux_CH4_emissions_BC89_hires_std./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
 FCH4_tot_hires_BC89_min = Flux_CH4_emissions_BC89_hires_min./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
@@ -291,6 +294,9 @@ FCH4_tot_hires_BC89_minEa = Flux_CH4_emissions_BC89_hires_minEa./(0.4.*1e11.*pho
 FCH4_tot_hires_BC89_maxEa = Flux_CH4_emissions_BC89_hires_maxEa./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
 FCH4_tot_hires_BC89_minCoal = Flux_CH4_emissions_BC89_hires_minCoal./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
 FCH4_tot_hires_BC89_maxCoal = Flux_CH4_emissions_BC89_hires_maxCoal./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
+FCH4_tot_hires_BC89_stdNoCoal = Flux_CH4_emissions_BC89_hires_stdNoCoal./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
+FCH4_tot_hires_BC89_minNoCoal = Flux_CH4_emissions_BC89_hires_minNoCoal./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
+FCH4_tot_hires_BC89_maxNoCoal = Flux_CH4_emissions_BC89_hires_maxNoCoal./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
 
 %% %% Pleistocene Ice-Core pCH4 vs. modeled T-dependence comparison
 timeslices2 = flip(0:1e3:8e5).'; % every ka
@@ -351,7 +357,7 @@ pO2_Pleisto5ka = pO2_Pleisto(1:5:length(timeslices2));
 FCH4_tot_Pleisto_max5ka = FCH4_tot_Pleisto_max(1:5:length(timeslices2));
 Teq_C_Pleisto5ka = Teq_C_Pleisto(1:5:length(timeslices2));
 
-save("time_GMST_pO2_FCH4_photochemInputHiRes_updated.mat",'timeUVb_hires', 'GMST_C_hires', 'GMST_C16', 'GMST_C84', 'pO2_hires', 'pO2_max', 'pO2_min', 'FCH4_tot_hires_BC89_std', 'FCH4_tot_hires_BC89_min', 'FCH4_tot_hires_BC89_max', 'FCH4_tot_hires_BC89_minCoal', 'FCH4_tot_hires_BC89_maxCoal', 'FCH4_tot_hires_BC89_minT', 'FCH4_tot_hires_BC89_maxT', 'FCH4_tot_hires_BC89_minEa', 'FCH4_tot_hires_BC89_maxEa', 'time_CH4FluxB09','FluxCH4_B09','Teq_C_hires'); % 
+save("time_GMST_pO2_FCH4_photochemInputHiRes_updated.mat",'timeUVb_hires', 'GMST_C_hires', 'GMST_C16', 'GMST_C84', 'pO2_hires', 'pO2_max', 'pO2_min', 'FCH4_tot_hires_BC89_std', 'FCH4_tot_hires_BC89_min', 'FCH4_tot_hires_BC89_max', 'FCH4_tot_hires_BC89_minCoal', 'FCH4_tot_hires_BC89_maxCoal', 'FCH4_tot_hires_BC89_minT', 'FCH4_tot_hires_BC89_maxT', 'FCH4_tot_hires_BC89_minEa', 'FCH4_tot_hires_BC89_maxEa', 'time_CH4FluxB09','FluxCH4_B09','FCH4_tot_hires_BC89_stdNoCoal','FCH4_tot_hires_BC89_minNoCoal','FCH4_tot_hires_BC89_maxNoCoal','Teq_C_hires'); % 
 % OR
 save("time_GMST_pO2_FCH4_photochemInputPleisto.mat",'timeUVb_Pleisto5ka', 'GMST_C_Pleisto5ka', 'pO2_Pleisto5ka', 'FCH4_tot_Pleisto_max5ka','Teq_C_Pleisto5ka'); % 
 
