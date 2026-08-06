@@ -179,6 +179,8 @@ Ea_CH4 = 100000; % NOMINAL; roughly 100 kJ/mol for methanogenesis (on archaeal p
 % slope
 Ea_minCH4 = 79000; % see below
 Ea_maxCH4 = 122000; % per Conrad 2023 (ref. Yvon-Durocher 2014), range in mean CH4 Ea vals for culture/community/field systems from 79-122 kJ/mol
+Ea_fermentation = 48900; % 48.9 kJ/mol avg Ea for marine sedimentary fermentation (Weston and Joye 2005), 
+% assuming that fermentation rate T-response can control methanogenesis T-response via substrate limitation (cf. Valentine+1994)
 
 T_ref_CH4 = 14; % referenced to PI GMST
 % assuming PIM long-term reference GMST of 14 C (cf. Beerling et al. 2009; Nema et al. 2012)
@@ -251,6 +253,7 @@ gamma_T_CH4_Beerling = exp(0.1678.*GMST_C_hires)./exp(0.1678.*T_ref_CH4); % PI s
 % however, Ea values vary between max and min of ranges in Conrad (79-122
 % kJ/mol, 100 kJ/mol as nominal)
 gamma_T_CH4_hires_std = exp((-Ea_CH4./Constant.R).*((1./(273.15+GMST_C_hires)) - (1./(273.15+T_ref_CH4)))); % Arrhenius function per Conrad 2023 - nominal GMST history
+
 gamma_T_CH4_hires_stdhiT = exp((-Ea_CH4./Constant.R).*((1./(273.15+GMST_C84)) - (1./(273.15+T_ref_CH4)))); % 
 gamma_T_CH4_hires_stdloT = exp((-Ea_CH4./Constant.R).*((1./(273.15+GMST_C16)) - (1./(273.15+T_ref_CH4)))); 
 gamma_T_CH4_hires_maxEahiT = exp((-Ea_maxCH4./Constant.R).*((1./(273.15+GMST_C84)) - (1./(273.15+T_ref_CH4)))); % Arrhenius function per Conrad 2023, endmember T and Ea
@@ -258,45 +261,64 @@ gamma_T_CH4_hires_minEaloT = exp((-Ea_minCH4./Constant.R).*((1./(273.15+GMST_C16
 gamma_T_CH4_hires_minEa = exp((-Ea_minCH4./Constant.R).*((1./(273.15+GMST_C_hires)) - (1./(273.15+T_ref_CH4)))); % lowest/highest bound of mean Ea values for 3 ecosystem scales (culture, sediment, and field - Conrad 2023)
 gamma_T_CH4_hires_maxEa = exp((-Ea_maxCH4./Constant.R).*((1./(273.15+GMST_C_hires)) - (1./(273.15+T_ref_CH4)))); % but with nominal GMST history
 
-% MACROSTRAT fluxes (mol CH4/yr and normalized for *PHOTOCHEM*)
-%Flux_CH4_emissions_Macro_hires_std = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_Macrostrat.*gamma_T_CH4_hires_std; 
-%Flux_CH4_emissions_Macro_hires_std(Flux_CH4_emissions_Macro_hires_std < 1e8) = 1e8; % prevents crashout in PHOTOCHEM
-%Flux_CH4_emissions_Macro_hires_min = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_Macrostrat.*gamma_T_CH4_hires_min; 
-%Flux_CH4_emissions_Macro_hires_min(Flux_CH4_emissions_Macro_hires_min < 1e8) = 1e8; % prevents crashout in PHOTOCHEM
-%Flux_CH4_emissions_Macro_hires_min = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_Macrostrat.*gamma_T_CH4_hires_min; 
-%Flux_CH4_emissions_Macro_hires_min(Flux_CH4_emissions_Macro_hires_min < 1e8) = 1e8; % prevents crashout in PHOTOCHEM
+gamma_T_CH4_hires_Ferm = exp((-Ea_fermentation./Constant.R).*((1./(273.15+GMST_C_hires)) - (1./(273.15+T_ref_CH4)))); % Arrhenius function per Weston and Joye 2005 for fermentation
+gamma_T_CH4_hires_FermhiT = exp((-Ea_fermentation./Constant.R).*((1./(273.15+GMST_C84)) - (1./(273.15+T_ref_CH4)))); % 
+gamma_T_CH4_hires_FermloT = exp((-Ea_fermentation./Constant.R).*((1./(273.15+GMST_C16)) - (1./(273.15+T_ref_CH4)))); 
 
-%FCH4_tot_hires_Macro_max = Flux_CH4_emissions_Macro_hires_std./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
-%FCH4_tot_hires_Macro_mid = Flux_CH4_emissions_Macro_hires_min./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
-%FCH4_tot_hires_Macro_min = Flux_CH4_emissions_Macro_hires_min./(0.4.*1e11.*photochem_fluxscaling);
 
-% BC89 fluxes (mol CH4/yr and normalized for *PHOTOCHEM*) - includes
-% geological, insect, marine, and other sources as constant over deep time
+% CH4 fluxes (mol CH4/yr) - includes geological, insect, marine, and other sources as constant over deep time
+
+% NOMINAL (std) and max/min envelopes
 Flux_CH4_emissions_BC89_hires_std = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_BC89.*gamma_T_CH4_hires_std + PI_otherCH4Emissions; 
 Flux_CH4_emissions_BC89_hires_min = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_lo.*gamma_T_CH4_hires_minEaloT + PI_otherCH4Emissions; % Ea_CH4, Gamma_coal, and T forcing all change vs. nominal
 Flux_CH4_emissions_BC89_hires_max = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_hi.*gamma_T_CH4_hires_maxEahiT + PI_otherCH4Emissions; 
+
+% boundary conditions sensitivity tests (single param changed in each - T, Ea, Gamma_coal)
 Flux_CH4_emissions_BC89_hires_minT = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_BC89.*gamma_T_CH4_hires_stdloT + PI_otherCH4Emissions; % only T forcing change vs. nominal
 Flux_CH4_emissions_BC89_hires_maxT = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_BC89.*gamma_T_CH4_hires_stdhiT + PI_otherCH4Emissions; 
 Flux_CH4_emissions_BC89_hires_minEa = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_BC89.*gamma_T_CH4_hires_minEa + PI_otherCH4Emissions; % only Ea change vs. nominal
 Flux_CH4_emissions_BC89_hires_maxEa = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_BC89.*gamma_T_CH4_hires_maxEa + PI_otherCH4Emissions; 
 Flux_CH4_emissions_BC89_hires_minCoal = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_lo.*gamma_T_CH4_hires_std + PI_otherCH4Emissions; % only Gamma_coal changes vs. nominal
 Flux_CH4_emissions_BC89_hires_maxCoal = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_hi.*gamma_T_CH4_hires_std + PI_otherCH4Emissions; 
+
+% no-Gamma_coal sensitivity test
 Flux_CH4_emissions_BC89_hires_stdNoCoal = PIWetlandRefEmissionCH4.*1.*gamma_T_CH4_hires_std + PI_otherCH4Emissions; 
 Flux_CH4_emissions_BC89_hires_minNoCoal = PIWetlandRefEmissionCH4.*1.*gamma_T_CH4_hires_minEaloT + PI_otherCH4Emissions; % Ea_CH4, Gamma_coal, and T forcing all change vs. nominal
 Flux_CH4_emissions_BC89_hires_maxNoCoal = PIWetlandRefEmissionCH4.*1.*gamma_T_CH4_hires_maxEahiT + PI_otherCH4Emissions;
 
+% fermentation-limited sensitivity test, with and without Gamma_coal
+Flux_CH4_emissions_BC89_hires_Ferm = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_BC89.*gamma_T_CH4_hires_Ferm + PI_otherCH4Emissions; 
+Flux_CH4_emissions_BC89_hires_minFerm = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_lo.*gamma_T_CH4_hires_FermloT + PI_otherCH4Emissions; % Ea_CH4, Gamma_coal, and T forcing all change vs. nominal
+Flux_CH4_emissions_BC89_hires_maxFerm = PIWetlandRefEmissionCH4.*Phanero_Awet_Rel_hi.*gamma_T_CH4_hires_FermhiT + PI_otherCH4Emissions; 
+Flux_CH4_emissions_BC89_hires_FermNoCoal = PIWetlandRefEmissionCH4.*1.*gamma_T_CH4_hires_Ferm + PI_otherCH4Emissions; 
+Flux_CH4_emissions_BC89_hires_minFermNoCoal = PIWetlandRefEmissionCH4.*1.*gamma_T_CH4_hires_FermloT + PI_otherCH4Emissions; % Ea_CH4, Gamma_coal, and T forcing all change vs. nominal
+Flux_CH4_emissions_BC89_hires_maxFermNoCoal = PIWetlandRefEmissionCH4.*1.*gamma_T_CH4_hires_FermhiT + PI_otherCH4Emissions; 
+
+
+% Normalized to reference fluxes in PHOTOCHEM
 FCH4_tot_hires_BC89_std = Flux_CH4_emissions_BC89_hires_std./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
 FCH4_tot_hires_BC89_min = Flux_CH4_emissions_BC89_hires_min./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
 FCH4_tot_hires_BC89_max = Flux_CH4_emissions_BC89_hires_max./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
+
 FCH4_tot_hires_BC89_minT = Flux_CH4_emissions_BC89_hires_minT./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
 FCH4_tot_hires_BC89_maxT = Flux_CH4_emissions_BC89_hires_maxT./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
 FCH4_tot_hires_BC89_minEa = Flux_CH4_emissions_BC89_hires_minEa./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
 FCH4_tot_hires_BC89_maxEa = Flux_CH4_emissions_BC89_hires_maxEa./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
 FCH4_tot_hires_BC89_minCoal = Flux_CH4_emissions_BC89_hires_minCoal./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
 FCH4_tot_hires_BC89_maxCoal = Flux_CH4_emissions_BC89_hires_maxCoal./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
+
 FCH4_tot_hires_BC89_stdNoCoal = Flux_CH4_emissions_BC89_hires_stdNoCoal./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
 FCH4_tot_hires_BC89_minNoCoal = Flux_CH4_emissions_BC89_hires_minNoCoal./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
 FCH4_tot_hires_BC89_maxNoCoal = Flux_CH4_emissions_BC89_hires_maxNoCoal./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
+
+FCH4_tot_hires_BC89_Ferm = Flux_CH4_emissions_BC89_hires_Ferm./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
+FCH4_tot_hires_BC89_minFerm = Flux_CH4_emissions_BC89_hires_minFerm./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
+FCH4_tot_hires_BC89_maxFerm = Flux_CH4_emissions_BC89_hires_maxFerm./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
+FCH4_tot_hires_BC89_FermNoCoal = Flux_CH4_emissions_BC89_hires_FermNoCoal./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
+FCH4_tot_hires_BC89_minFermNoCoal = Flux_CH4_emissions_BC89_hires_minFermNoCoal./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
+FCH4_tot_hires_BC89_maxFermNoCoal = Flux_CH4_emissions_BC89_hires_maxFermNoCoal./(0.4.*1e11.*photochem_fluxscaling); % normalized to reference flux of roughly 171.3 Tg CH4/yr
+
+
 
 %% %% Pleistocene Ice-Core pCH4 vs. modeled T-dependence comparison
 timeslices2 = flip(0:1e3:8e5).'; % every ka
@@ -357,7 +379,10 @@ pO2_Pleisto5ka = pO2_Pleisto(1:5:length(timeslices2));
 FCH4_tot_Pleisto_max5ka = FCH4_tot_Pleisto_max(1:5:length(timeslices2));
 Teq_C_Pleisto5ka = Teq_C_Pleisto(1:5:length(timeslices2));
 
-save("time_GMST_pO2_FCH4_photochemInputHiRes_updated.mat",'timeUVb_hires', 'GMST_C_hires', 'GMST_C16', 'GMST_C84', 'pO2_hires', 'pO2_max', 'pO2_min', 'FCH4_tot_hires_BC89_std', 'FCH4_tot_hires_BC89_min', 'FCH4_tot_hires_BC89_max', 'FCH4_tot_hires_BC89_minCoal', 'FCH4_tot_hires_BC89_maxCoal', 'FCH4_tot_hires_BC89_minT', 'FCH4_tot_hires_BC89_maxT', 'FCH4_tot_hires_BC89_minEa', 'FCH4_tot_hires_BC89_maxEa', 'time_CH4FluxB09','FluxCH4_B09','FCH4_tot_hires_BC89_stdNoCoal','FCH4_tot_hires_BC89_minNoCoal','FCH4_tot_hires_BC89_maxNoCoal','Teq_C_hires'); % 
+save("time_GMST_pO2_FCH4_photochemInputHiRes_updated.mat",'timeUVb_hires', 'GMST_C_hires', 'GMST_C16', 'GMST_C84', 'pO2_hires', 'pO2_max', 'pO2_min', 'FCH4_tot_hires_BC89_std',...
+    'FCH4_tot_hires_BC89_min', 'FCH4_tot_hires_BC89_max', 'FCH4_tot_hires_BC89_minCoal', 'FCH4_tot_hires_BC89_maxCoal', 'FCH4_tot_hires_BC89_minT', 'FCH4_tot_hires_BC89_maxT',...
+    'FCH4_tot_hires_BC89_minEa', 'FCH4_tot_hires_BC89_maxEa', 'time_CH4FluxB09','FluxCH4_B09','FCH4_tot_hires_BC89_stdNoCoal','FCH4_tot_hires_BC89_minNoCoal','FCH4_tot_hires_BC89_maxNoCoal',...
+    'FCH4_tot_hires_BC89_Ferm','FCH4_tot_hires_BC89_minFerm','FCH4_tot_hires_BC89_maxFerm','FCH4_tot_hires_BC89_FermNoCoal','FCH4_tot_hires_BC89_minFermNoCoal','FCH4_tot_hires_BC89_maxFermNoCoal','Teq_C_hires'); % 
 % OR
 save("time_GMST_pO2_FCH4_photochemInputPleisto.mat",'timeUVb_Pleisto5ka', 'GMST_C_Pleisto5ka', 'pO2_Pleisto5ka', 'FCH4_tot_Pleisto_max5ka','Teq_C_Pleisto5ka'); % 
 
@@ -1138,6 +1163,38 @@ hold on
 scatter(-5,1,'MarkerFaceColor','k','MarkerEdgeColor','k','Marker','o') % 'none' for no marker
 hold on
 xline([0],'-k')
+hold on
+plot(polyshape([48, 48, 56, 56],cat(1,2, 2.5, 2.5, 2).'),'FaceColor',darkgreen,'EdgeColor','none'); % cf. Wilton+2019 abstract, Ypresian Eocene (56-48 Ma) wetland fraction is 2-2.5x higher than reference modern value 
+% (wetland area estimate somewhat outdated cf. Hopcroft+2020, but mainly we care about relative change between
+% Eocene and modern, not absolute values - see Table 2 in Wilton+2019
+hold on 
+% lower bounds on wetland area from coal forest area estimates from Cleal and Thomas 2005,
+% assumes 4 Mkm^2 wetland area per Wilton+2019, though note much higher estimate in Hopcroft+2020 and refs 
+% (would make these lower bounds even low and harder to evaluate)
+% ages are taken as midpoints (if "middle" or "-"), beginning points (if
+% "early"), or endpoints (if "late") for each stage of the Carbon-Permian
+plot(323.4, 467./4000,'^','Color',darkgreen) 
+hold on
+plot(315.2, 1786./4000,'^','Color',darkgreen) 
+hold on
+plot(311.1, 1721./4000,'^','Color',darkgreen) 
+hold on
+plot(307, 2395./4000,'^','Color',darkgreen) 
+hold on
+plot(305.35, 1131./4000,'^','Color',darkgreen) 
+hold on
+plot(301.3, 1087./4000,'^','Color',darkgreen) 
+hold on
+plot(296.21, 1590./4000,'^','Color',darkgreen) 
+hold on
+plot(290.1, 1690./4000,'^','Color',darkgreen) 
+hold on
+plot(278.85, 105./4000,'^','Color',darkgreen) 
+hold on
+plot(256.825, 395./4000,'^','Color',darkgreen) 
+hold on
+plot(253.021, 140./4000,'^','Color',darkgreen) 
+hold on
 %hold on
 %yline([1],'--k')
 %plot(4.5-(time./1e9),PGC.pH.surface,'color','r','LineStyle','-')
