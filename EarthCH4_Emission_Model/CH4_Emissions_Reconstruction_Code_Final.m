@@ -842,7 +842,7 @@ hold on
 %hold on
 %plot(timeslices./1e6,GMST_C84,'r','LineStyle',':','LineWidth',1.25)
 %hold on
-scatter(-5,14,'o','MarkerFaceColor','r')
+scatter(-5,14,'o','MarkerFaceColor','k')
 hold on
 %errorbar(-5,10.162,NaN,0.92846,'Color','k','CapSize',1)
 %hold on
@@ -972,6 +972,10 @@ plot(polyshape(polyx,polyAcoal),'FaceColor',darkgreen,'EdgeColor','none'); % PRI
 hold on 
 plot(timeslices/1e6,Phanero_Awet_Rel_BC89,'Color',darkgreen,'LineStyle','-','LineWidth',1.25)
 hold on
+plot(polyshape([48, 48, 56, 56],cat(1,2, 2.5, 2.5, 2).'),'FaceColor','g','EdgeColor','none'); % cf. Wilton+2019 abstract, Ypresian Eocene (56-48 Ma) wetland fraction is 2-2.5x higher than reference modern value 
+% (wetland area estimate somewhat outdated cf. Hopcroft+2020, but mainly we care about relative change between
+% Eocene and modern, not absolute values - see Table 2 in Wilton+2019
+hold on 
 %
 %plot(timeslices/1e6,Phanero_Awet_Rel_lo,'Color',darkgreen,'LineStyle',':','LineWidth',1.25)
 %hold on
@@ -1160,6 +1164,7 @@ plot(timeslices./1e6,Phanero_fwet_BC89./Phanero_fwet_BC89(end),'g-','Marker','no
 hold on
 plot(timeslices./1e6,Phanero_Awet_Rel_BC89,'color',darkgreen,'Marker','none','LineWidth',2) % 'none' for no marker
 hold on
+%plot(In_data.PhanBiomes.LiHumidtime, In_data.PhanBiomes.LiHumidPercent./In_data.PhanBiomes.LiHumidPercent(end),'g-.','Marker','none','LineWidth',1.25)
 scatter(-5,1,'MarkerFaceColor','k','MarkerEdgeColor','k','Marker','o') % 'none' for no marker
 hold on
 xline([0],'-k')
@@ -1173,28 +1178,28 @@ hold on
 % (would make these lower bounds even low and harder to evaluate)
 % ages are taken as midpoints (if "middle" or "-"), beginning points (if
 % "early"), or endpoints (if "late") for each stage of the Carbon-Permian
-plot(323.4, 467./4000,'^','Color',darkgreen) 
-hold on
-plot(315.2, 1786./4000,'^','Color',darkgreen) 
-hold on
-plot(311.1, 1721./4000,'^','Color',darkgreen) 
-hold on
-plot(307, 2395./4000,'^','Color',darkgreen) 
-hold on
-plot(305.35, 1131./4000,'^','Color',darkgreen) 
-hold on
-plot(301.3, 1087./4000,'^','Color',darkgreen) 
-hold on
-plot(296.21, 1590./4000,'^','Color',darkgreen) 
-hold on
-plot(290.1, 1690./4000,'^','Color',darkgreen) 
-hold on
-plot(278.85, 105./4000,'^','Color',darkgreen) 
-hold on
-plot(256.825, 395./4000,'^','Color',darkgreen) 
-hold on
-plot(253.021, 140./4000,'^','Color',darkgreen) 
-hold on
+% plot(323.4, 467./4000,'^','Color',darkgreen) 
+% hold on
+% plot(315.2, 1786./4000,'^','Color',darkgreen) 
+% hold on
+% plot(311.1, 1721./4000,'^','Color',darkgreen) 
+% hold on
+% plot(307, 2395./4000,'^','Color',darkgreen) 
+% hold on
+% plot(305.35, 1131./4000,'^','Color',darkgreen) 
+% hold on
+% plot(301.3, 1087./4000,'^','Color',darkgreen) 
+% hold on
+% plot(296.21, 1590./4000,'^','Color',darkgreen) 
+% hold on
+% plot(290.1, 1690./4000,'^','Color',darkgreen) 
+% hold on
+% plot(278.85, 105./4000,'^','Color',darkgreen) 
+% hold on
+% plot(256.825, 395./4000,'^','Color',darkgreen) 
+% hold on
+% plot(253.021, 140./4000,'^','Color',darkgreen) 
+% hold on
 %hold on
 %yline([1],'--k')
 %plot(4.5-(time./1e9),PGC.pH.surface,'color','r','LineStyle','-')
@@ -1222,6 +1227,52 @@ yticks([]);
 
 set(gca,'XDir','reverse');
 set(gca,'xlim',[-10,375]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
+fontsize(24,"points") % 14
+
+box on
+
+
+
+figure(601211);clf
+lc = [0 0 0];
+rc = [0 0 0];
+set(figure(601211),'defaultAxesColorOrder',[lc; rc]);
+
+
+tiledlayout(1,1,"TileSpacing","compact","Padding","compact")
+%subplot(3,1,1)
+
+nexttile
+
+yyaxis left
+size = 45;
+
+%plot(polyshape(polyconst,polyKPg),'FaceColor',KPgcolor,'EdgeColor','none'); % PRIOR - Judd et al. 2024 GMST (nominal, 50%ile)
+%hold on 
+
+plot(In_data.PhanBiomes.LiHumidtime, In_data.PhanBiomes.LiHumidPercent./In_data.PhanBiomes.LiHumidPercent(end),'g-','Marker','none','LineWidth',2)
+
+xlabel('Age Before Present (Ma)'); ylabel('Relative Humid Land Area (normalized to PI)')
+set(gca,'XDir','reverse');
+set(gca,'xlim',[0,250]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
+%xlim([12,36])
+%pbaspect([3 1 1])
+fontsize(18,"points") % 14 ,'Revised Phanerozoic CH_4 Emissions (Weak \gamma_T)',
+%L = legend('','A_{land} (Global Land Area)','f_{coal} (Coal Wetland Fraction of Land Area)','\Gamma_{coal} (Global Coal Wetland Area)',...
+%    'FontSize',18); % 14,'Modern pN_2O (337 ppb)'
+%L.AutoUpdate = 'off';
+title('Humid Land Area Fraction (Li et al. 2025)')
+
+yyaxis right
+
+geotimescale_Mills_JFHmod_375Ma;
+hold on
+PhanTransitions;
+set(gca,'YTickLabel',[]);
+yticks([]);
+
+set(gca,'XDir','reverse');
+set(gca,'xlim',[0,250]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
 fontsize(24,"points") % 14
 
 box on
