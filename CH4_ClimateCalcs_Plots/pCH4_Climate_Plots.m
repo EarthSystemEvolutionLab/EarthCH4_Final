@@ -1998,17 +1998,22 @@ hold on
 %plot(timeslices./1e6,Flux_CH4_emissions_BC89_hires_min./1e12,'k','Marker','d','LineWidth',1.25)
 %Flux_CH4_emissions_BC89_hires_std./1e12
 %hold on timeslices./1e6,FluxCH4_mid
-semilogy(timeFluxB09./1e6,16.04.*FluxCH4_B09./1e3,'k','Marker','o','LineStyle','-')
+LA = semilogy(timeFluxB09./1e6,16.04.*FluxCH4_B09./1e3,'k','Marker','o','LineStyle','-');
 hold on
 %[Nx,Ny] = boundary(polyshape(polyx2,polyFCH4em_minmax));
 %patch(Nx,Ny,Emcolor) % ,'FaceColor',Emcolor,'EdgeColor',Emcolor
 plot(polyshape(polyx,polyFCH4em_minmax),'FaceColor',colorCH4,'EdgeColor','none');
 hold on
-semilogy(MegaTime./1e6,16.04.*FluxCH4_mid./1e3,'color',colorCH4,'Marker','none','LineWidth',2,'Linestyle','-') %,'MarkerSize',3 'none' for no marker
+LB = semilogy(MegaTime./1e6,16.04.*FluxCH4_mid./1e3,'color',colorCH4,'Marker','none','LineWidth',2,'Linestyle','-'); %,'MarkerSize',3 'none' for no marker
 hold on
-plot(polyshape([48, 48, 56, 56],cat(1,0.656, 0.909, 0.909, 0.656).'),'FaceColor','k','EdgeColor','none'); % cf. Wilton+2019 abstract, Ypresian Eocene (56-48 Ma) wetland fraction is 2-2.5x higher than reference modern value 
-% (wetland area estimate somewhat outdated cf. Hopcroft+2020, but mainly we care about relative change between
-% Eocene and modern, not absolute values - see Table 2 in Wilton+2019
+%plot(polyshape([48, 48, 56, 56],cat(1,0.656, 0.909, 0.909, 0.656).'),'FaceColor','k','EdgeColor','none'); % cf. Wilton+2019 abstract, Ypresian Eocene (56-48 Ma) wetland fraction is 2-2.5x higher than reference modern value 
+LC = semilogy(52,0.656,'MarkerFaceColor','k','Marker','^','LineStyle','none'); % low bounds from Wilton+2019
+hold on 
+semilogy(52,0.909,'MarkerFaceColor','k','Marker','v','LineStyle','none') % high bounds from Wilton+2019
+hold on 
+LD = semilogy(55,1.1426,'MarkerFaceColor','k','Marker','square','LineStyle','none'); % From Table S1, Beerling+2011 4x CO2 Eocene wetland CH4 flux total
+hold on 
+semilogy(90,0.857,'MarkerFaceColor','k','Marker','square','LineStyle','none') % From Table S1, Beerling+2011 4x CO2 Cretaceous wetland CH4 flux total
 hold on 
 %
 %plot(timeslices./1e6,Flux_CH4_emissions_BC89_hires_min./1e12,'m','Marker','none','LineWidth',1.5,'Linestyle',':')
@@ -2037,8 +2042,8 @@ ylim([0.02,100])
 %title('Global CH_4 Emissions')
 pbaspect([2 1 1])
 fontsize(16,"points") % 14   'Revised Phanerozoic CH_4 Emissions (Weak \gamma_T per Rubisco, GMST per J+24)',  'Weak \gamma_T per Zhu+(2014) & Judd+(2024)',
-L = legend('','','CH_4 Emissions per Beerling+(2009)','',...
-    'Revised CH_4 Emissions',...
+L = legend([LB, LA, LD, LC],'EarthCH_4','Beerling+(2009)',...
+    'Beerling+(2011)','Wilton+(2019)',...
     'FontSize',16); % 14,'Modern pN_2O (337 ppb)'     
 % 'Revised Phanerozoic CH_4 Emissions (no \gamma_T)','Revised Phanerozoic CH_4 Emissions (\gamma_T per B+09, GMST per J+24)',...
 L.AutoUpdate = 'off';
@@ -2088,6 +2093,11 @@ hold on
 semilogy(MegaTime./1e6,Total_pCH4_high.*1e6,'color',colorCH4,'Marker','none','LineStyle','-','LineWidth',2);%,'MarkerSize',3)
 hold on
 
+semilogy(55,3.614,'MarkerFaceColor','k','Marker','square','LineStyle','none') % From Table 1, Beerling+2011 4x CO2 Eocene pCH4 (not PI isoprene)
+hold on 
+semilogy(90,3.304,'MarkerFaceColor','k','Marker','square','LineStyle','none') % From Table 1, Beerling+2011 4x CO2 Cretaceous pCH4 (not PI isoprene)
+hold on 
+
 %plot(MegaTime./1e6,MaxEnv_pCH4.*1e6,'m','Marker','none','LineStyle',':','LineWidth',2)
 %hold on
 %plot(MegaTime./1e6,MinEnv_pCH4.*1e6,'m','Marker','none','LineStyle',':','LineWidth',2)
@@ -2110,10 +2120,10 @@ ylabel('pCH_4 (ppm atm)')
 %ylim([-20,320]) % 350
 pbaspect([2 1 1])
 fontsize(16,"points") % 14 Preindustrial pCH_4 (0.565-0.715 ppm)
-L = legend('','','pCH_4 per Beerling+(2009)','','Revised pCH_4','FontSize',16); % 14,'Modern pN_2O (337 ppb)' 'pCH_4 (Weak \gamma_T per Zhu+2014)',
+%L = legend('','','pCH_4 per Beerling+(2009)','','Revised pCH_4','FontSize',16); % 14,'Modern pN_2O (337 ppb)' 'pCH_4 (Weak \gamma_T per Zhu+2014)',
 %,'Revised Phanerozoic pCH_4 (Strong \gamma_T)',...
 %    'Revised Phanerozoic pCH_4 (No \gamma_T)' 'Revised Phanerozoic pCH_4 (Weak \gamma_T for C-cycle)',
-L.AutoUpdate = 'off';
+%L.AutoUpdate = 'off';
 %title('CH_4 Partial Pressure (ppm)');
 
 box on
