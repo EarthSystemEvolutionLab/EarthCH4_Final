@@ -724,6 +724,10 @@ hold on
 %
 scatter(-5,1,'o','MarkerFaceColor',darkgreen)
 hold on
+plot(55,4.359,'MarkerFaceColor',darkgreen,'Marker','square')
+hold on
+plot(90,3.359,'MarkerFaceColor',darkgreen,'Marker','square')
+hold on
 %errorbar(-5,10.162,NaN,0.92846,'Color','k','CapSize',1)
 %hold on
 annotation('textbox',[.28 .25-0.033-0.023 .1 .1],'String','C','EdgeColor','k','FitBoxToText','on','HorizontalAlignment','center')
@@ -972,10 +976,16 @@ plot(polyshape(polyx,polyAcoal),'FaceColor',darkgreen,'EdgeColor','none'); % PRI
 hold on 
 plot(timeslices/1e6,Phanero_Awet_Rel_BC89,'Color',darkgreen,'LineStyle','-','LineWidth',1.25)
 hold on
-plot(polyshape([48, 48, 56, 56],cat(1,2, 2.5, 2.5, 2).'),'FaceColor','g','EdgeColor','none'); % cf. Wilton+2019 abstract, Ypresian Eocene (56-48 Ma) wetland fraction is 2-2.5x higher than reference modern value 
+plot(55,4.359,'MarkerFaceColor',darkgreen,'Marker','square') % using 4x PI pCO2 early Eocene (55 Ma) total annual wetland area from Beerling+2011 SI Table S1, normalized to mean annual PI wetland area from Valdes+2005 Table 1
+hold on
+plot(90,3.359,'MarkerFaceColor',darkgreen,'Marker','square') % using 4x PI pCO2 late Cretaceous (90 Ma) total annual wetland area from Beerling+2011 SI Table S1, normalized to mean annual PI wetland area from Valdes+2005 Table 1
+hold on
+plot(52,1.667,'MarkerFaceColor',darkgreen,'Marker','v') % upper Eocene wetland area estimate from Wilton+2019, normalized to 1.5x their modern wetland area (accounting for 50% higher PI wetland coverage based on Hopcroft+2020)
+hold on
+%plot(polyshape([48, 48, 56, 56],cat(1,2, 2.5, 2.5, 2).'),'FaceColor','g','EdgeColor','none'); % cf. Wilton+2019 abstract, Ypresian Eocene (56-48 Ma) wetland fraction is 2-2.5x higher than reference modern value 
 % (wetland area estimate somewhat outdated cf. Hopcroft+2020, but mainly we care about relative change between
 % Eocene and modern, not absolute values - see Table 2 in Wilton+2019
-hold on 
+%hold on 
 %
 %plot(timeslices/1e6,Phanero_Awet_Rel_lo,'Color',darkgreen,'LineStyle',':','LineWidth',1.25)
 %hold on
@@ -1169,10 +1179,17 @@ scatter(-5,1,'MarkerFaceColor','k','MarkerEdgeColor','k','Marker','o') % 'none' 
 hold on
 xline([0],'-k')
 hold on
-plot(polyshape([48, 48, 56, 56],cat(1,2, 2.5, 2.5, 2).'),'FaceColor',darkgreen,'EdgeColor','none'); % cf. Wilton+2019 abstract, Ypresian Eocene (56-48 Ma) wetland fraction is 2-2.5x higher than reference modern value 
+plot(55,4.359,'MarkerFaceColor',darkgreen,'Marker','square')
+hold on
+plot(90,3.359,'MarkerFaceColor',darkgreen,'Marker','square')
+%hold on
+%errorbar(52,1.76,4,'horizontal','Color',darkgreen,'CapSize',0,'Marker','none','LineWidth',2)
+%plot(polyshape([48, 48, 56, 56],cat(1,2, 2.5, 2.5, 2).'),'FaceColor',darkgreen,'EdgeColor','none'); % cf. Wilton+2019 abstract, Ypresian Eocene (56-48 Ma) wetland fraction is 2-2.5x higher than reference modern value 
 % (wetland area estimate somewhat outdated cf. Hopcroft+2020, but mainly we care about relative change between
 % Eocene and modern, not absolute values - see Table 2 in Wilton+2019
 hold on 
+plot(52,1.667,'MarkerFaceColor',darkgreen,'Marker','v') % upper Eocene wetland area estimate from Wilton+2019, normalized to 1.5x their modern wetland area (accounting for 50% higher PI wetland coverage based on Hopcroft+2020)
+hold on
 % lower bounds on wetland area from coal forest area estimates from Cleal and Thomas 2005,
 % assumes 4 Mkm^2 wetland area per Wilton+2019, though note much higher estimate in Hopcroft+2020 and refs 
 % (would make these lower bounds even low and harder to evaluate)
