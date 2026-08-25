@@ -251,15 +251,11 @@ GMST.Max = TotalGMSTMax;
 %% Compute Radiative Forcing (up to 100 ppm pCH4) and compare CO2-CH4-solar irradiation climate model against Judd et al. (2024) GMST reconstruction
 % modified in places from EONS (Horne and Goldblatt 2024)
     
-% Calculate solar flux
-% sun has increased in luminosity by 25-30% over 4.5e9 years; use
-% Caldeira + Kasting (1992) equation for solar luminosity increase. In
-% their function, t = years FROM present (ie. negative time, hence
-% subtracting the full duration of model run!)
+% Solar Luminosity
     
 %timeSolar = 4.5e9 - (flip(0:1e5:4e8)).';
 % cf. agreement with UV flux from Sun since beginning of Earth, with time-power law evolution of flux intensity/surface area based on Zahnle and Walker 1982 Fig 9 caption equation, 
-rf.F_solar = 1./(1+(0.38.*(4.57e9 - ((4.57e9-MegaTime)))./4.57e9)); %from EONS (cf. Gough 1981, Feulner 2012), with modern irradiance (W/m^2) of 1361 (irrelevant due to self-normalization);  
+rf.F_solar = 1./(1+(0.4.*(4.57e9 - ((4.57e9-MegaTime)))./4.57e9)); % cf. Gough 1981, Feulner 2012, with modern irradiance (W/m^2) of 1361 (irrelevant due to self-normalization);  
     
 rf.sc  = rf.F_solar.*v.S_Pref; % W/m2; solar luminosity over time ; (1 - (0.38.*(nt - 4e9) ./4.55e9)).^(-1) 
     
@@ -1448,7 +1444,7 @@ box on
 
 
 
-
+% plot(MegaTime./1e6,(TotalGMST - 14)./((RF_CH4.Mid + RF_CO2.Mid + rf.Delta_Fs)./4.1124)) % calculates kappa_c needed for GMST prior-posterior match in Eocene
 
 
 
