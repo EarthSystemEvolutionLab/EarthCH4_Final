@@ -1175,20 +1175,22 @@ hold on
 plot(timeslices./1e6,Phanero_Awet_Rel_BC89,'color',darkgreen,'Marker','none','LineWidth',2) % 'none' for no marker
 hold on
 %plot(In_data.PhanBiomes.LiHumidtime, In_data.PhanBiomes.LiHumidPercent./In_data.PhanBiomes.LiHumidPercent(end),'g-.','Marker','none','LineWidth',1.25)
-scatter(-5,1,'MarkerFaceColor','k','MarkerEdgeColor','k','Marker','o') % 'none' for no marker
+
+plot(55,4.359,'MarkerFaceColor',darkgreen,'Marker','square','MarkerSize',14,'LineStyle','none')
 hold on
-xline([0],'-k')
-hold on
-plot(55,4.359,'MarkerFaceColor',darkgreen,'Marker','square')
-hold on
-plot(90,3.359,'MarkerFaceColor',darkgreen,'Marker','square')
+plot(90,3.359,'MarkerFaceColor',darkgreen,'Marker','square','MarkerSize',14,'LineStyle','none')
 %hold on
 %errorbar(52,1.76,4,'horizontal','Color',darkgreen,'CapSize',0,'Marker','none','LineWidth',2)
 %plot(polyshape([48, 48, 56, 56],cat(1,2, 2.5, 2.5, 2).'),'FaceColor',darkgreen,'EdgeColor','none'); % cf. Wilton+2019 abstract, Ypresian Eocene (56-48 Ma) wetland fraction is 2-2.5x higher than reference modern value 
 % (wetland area estimate somewhat outdated cf. Hopcroft+2020, but mainly we care about relative change between
 % Eocene and modern, not absolute values - see Table 2 in Wilton+2019
 hold on 
-plot(52,1.667,'MarkerFaceColor',darkgreen,'Marker','v') % upper Eocene wetland area estimate from Wilton+2019, normalized to 1.5x their modern wetland area (accounting for 50% higher PI wetland coverage based on Hopcroft+2020)
+plot(52,1.667,'MarkerFaceColor',darkgreen,'Marker','v','MarkerSize',14,'LineStyle','none') % upper Eocene wetland area estimate from Wilton+2019, normalized to 1.5x their modern wetland area (accounting for 50% higher PI wetland coverage based on Hopcroft+2020)
+hold on
+
+scatter(-5,1,'MarkerFaceColor','k','MarkerEdgeColor','k','Marker','o') % 'none' for no marker
+hold on
+xline([0],'-k')
 hold on
 % lower bounds on wetland area from coal forest area estimates from Cleal and Thomas 2005,
 % assumes 4 Mkm^2 wetland area per Wilton+2019, though note much higher estimate in Hopcroft+2020 and refs 
@@ -1231,7 +1233,7 @@ set(gca,'xlim',[-10,375],'ylim',[-0.45,8]) % ,'xtick',time_ticks,'ylim',[0,1.5e5
 %pbaspect([3 1 1])
 fontsize(18,"points") % 14 ,'Revised Phanerozoic CH_4 Emissions (Weak \gamma_T)',
 L = legend('','A_{land} (Global Land Area)','f_{coal} (Coal Wetland Fraction of Land Area)','\Gamma_{coal} (Global Coal Wetland Area)',...
-    'FontSize',18); % 14,'Modern pN_2O (337 ppb)'
+    'Beerling+(2011)','','Wilton+(2019) upper bound','FontSize',18); % 14,'Modern pN_2O (337 ppb)'
 L.AutoUpdate = 'off';
 
 yyaxis right
@@ -1244,7 +1246,7 @@ yticks([]);
 
 set(gca,'XDir','reverse');
 set(gca,'xlim',[-10,375]) % 550,'xtick',time_ticks,'ylim',[0,1.5e5]
-fontsize(24,"points") % 14
+fontsize(28,"points") % 14
 
 box on
 
