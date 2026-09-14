@@ -365,7 +365,7 @@ for ihl = 1:length(hilo)
     NM1 = 2.5e-6; % critical transition pX for X = N2O, CH4, change in RF function mode
     
     % CO2
-    rf.CO2_atm = mr.CO2; % concentration as partial pressure (prescribed, atm) 
+    rf.CO2_atm = mr.CO2; % concentration (prescribed) 
     % - per Dalton's Law, shouldn't depend on total atmo P (especially in
     % Phanerozoic N2-O2 dominated atmosphere, so use this as equivalent to ppmv
     % mixing ratios in 1-atm atmosphere 
@@ -583,15 +583,15 @@ set(gca,'XDir','reverse');
 set(gca,'xlim',[-10,375],'ylim',[-4,65]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
-xlabel('Age Before Present (Ma)'); ylabel('pCH_4 (ppm atm)')
+xlabel('Age Before Present (Ma)'); ylabel('yCH_4 (ppm atm)')
 %ylim([-20,320]) % 350
 pbaspect([2 1 1])
 fontsize(24,"points") % 14
-L = legend('Preindustrial pCH_4 (0.565-0.715 ppm)','Phanerozoic pCH_4 per Beerling+(2009)','Revised Phanerozoic pCH_4','FontSize',24); % 14,'Modern pN_2O (337 ppb)' 'pCH_4 (Weak \gamma_T per Zhu+2014)',
-%,'Revised Phanerozoic pCH_4 (Strong \gamma_T)',...
-%    'Revised Phanerozoic pCH_4 (No \gamma_T)' 'Revised Phanerozoic pCH_4 (Weak \gamma_T for C-cycle)',
+L = legend('Preindustrial yCH_4 (0.565-0.715 ppm)','Phanerozoic yCH_4 per Beerling+(2009)','Revised Phanerozoic yCH_4','FontSize',24); % 14,'Modern pN_2O (337 ppb)' 'yCH_4 (Weak \gamma_T per Zhu+2014)',
+%,'Revised Phanerozoic yCH_4 (Strong \gamma_T)',...
+%    'Revised Phanerozoic yCH_4 (No \gamma_T)' 'Revised Phanerozoic yCH_4 (Weak \gamma_T for C-cycle)',
 L.AutoUpdate = 'off';
-title('CH_4 Partial Pressure (ppm)');
+title('CH_4 Mixing Ratio (ppm)');
 
 box on
 
@@ -683,14 +683,14 @@ set(gca,'XDir','reverse');
 set(gca,'xlim',[-10,800]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
-xlabel('Age Before Present (ka)'); ylabel('pCH_4 (ppb atm)')
-%title('Pleistocene pCH_4 Data vs. Model Output')
+xlabel('Age Before Present (ka)'); ylabel('yCH_4 (ppb atm)')
+%title('Pleistocene yCH_4 Data vs. Model Output')
 %ylim([-20,350])
 pbaspect([3 1 1])
 fontsize(24,"points") % 14
-L = legend('Ice Core pCH_4',...
-    'Modeled pCH_4','FontSize',28); % 'Revised Phanerozoic pCH_4 (Weak \gamma_T for C-cycle)', 14,'Modern pN_2O (337 ppb)'
-%     %'Revised Phanerozoic pCH_4 (Weak \gamma_T, per Zhu+2014)',
+L = legend('Ice Core yCH_4',...
+    'Modeled yCH_4','FontSize',28); % 'Revised Phanerozoic yCH_4 (Weak \gamma_T for C-cycle)', 14,'Modern pN_2O (337 ppb)'
+%     %'Revised Phanerozoic yCH_4 (Weak \gamma_T, per Zhu+2014)',
 
 L.AutoUpdate = 'off';
 
@@ -748,13 +748,13 @@ box on
 %set(gca,'xlim',[0,1000],'ylim',[300,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
-%xlabel('Age Before Present (ka)'); ylabel('pCH_4 (ppb atm)')
+%xlabel('Age Before Present (ka)'); ylabel('yCH_4 (ppb atm)')
 %ylim([-20,350])
 %pbaspect([3 1 1])
 %fontsize(24,"points") % 14
-%L = legend('Preindustrial Modern pCH_4 (715 ppb, ~565 ppb pre-agrarian)','Ice Core pCH_4 (last 800 ka, Loulergue+2008)',...
-%    'Revised Phanerozoic pCH_4 (Weak \gamma_T, per Zhu+2014)','Revised Phanerozoic pCH_4 (Strong \gamma_T, per Conrad 2023)','FontSize',18); % 'Revised Phanerozoic pCH_4 (Weak \gamma_T for C-cycle)', 14,'Modern pN_2O (337 ppb)'
-%     %'Revised Phanerozoic pCH_4 (Strong \gamma_T)',
+%L = legend('Preindustrial Modern yCH_4 (715 ppb, ~565 ppb pre-agrarian)','Ice Core yCH_4 (last 800 ka, Loulergue+2008)',...
+%    'Revised Phanerozoic yCH_4 (Weak \gamma_T, per Zhu+2014)','Revised Phanerozoic yCH_4 (Strong \gamma_T, per Conrad 2023)','FontSize',18); % 'Revised Phanerozoic yCH_4 (Weak \gamma_T for C-cycle)', 14,'Modern pN_2O (337 ppb)'
+%     %'Revised Phanerozoic yCH_4 (Strong \gamma_T)',
 
 %L.AutoUpdate = 'off';
 
@@ -929,7 +929,7 @@ ylabel('GMST (^\circC)') % ,'Solar + CO_2 + Weak CH_4 \gamma_T',
  %   'Climate History with CO_2, CH_4, and N_2O (low crustal E_a, high emission scenario)','FontSize',12)
 %L.AutoUpdate = 'off';
 title('Constant Phanerozoic Climate Sensitivity (Judd+2024)')
-% (\Gamma_c = 1.7 K/(W/m^2)), assuming Beerling et al. [2009] pCH_4)
+% (\Gamma_c = 1.7 K/(W/m^2)), assuming Beerling et al. [2009] yCH_4)
 fontsize(20,"points") % 14
 
 yyaxis right
@@ -1014,7 +1014,7 @@ L = legend([L1, L2, L4],'GMST Prior','Solar + CO_2 only','Solar + CO_2 + CH_4','
  %   'Climate History with CO_2, CH_4, and N_2O (low crustal E_a, high emission scenario)','FontSize',12)
 L.AutoUpdate = 'off';
 title('GMST-Dependent Climate Sensitivity (Wolf+2018)')
-% (\Gamma_c = 1.7 K/(W/m^2)), assuming Beerling et al. [2009] pCH_4)
+% (\Gamma_c = 1.7 K/(W/m^2)), assuming Beerling et al. [2009] yCH_4)
 fontsize(12,"points") % 14
 
 yyaxis right
@@ -1137,7 +1137,7 @@ set(gca,'xlim',[-10,375],'ylim',[0.01,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
 %xlabel('Age Before Present (Ma)'); 
-ylabel('pCH_4 (ppm atm)')
+ylabel('yCH_4 (ppm atm)')
 yticks([0.1, 1, 10, 100]);
 yticklabels({'0.1','1','10','100'});
 %yticklabels({'0.1','','','','0.5','','','','','1','','','','','','','','','10','','','','50','','','','','100','','','','500','','','','','1000'});
@@ -1145,11 +1145,11 @@ yticklabels({'0.1','1','10','100'});
 pbaspect([3 1 1])
 fontsize(24,"points") % 14
 L = legend([L9, L10, L8, L7, L6, L5],'Nominal','pO_2','\Gamma_{coal}','GMST','E_a',...
-    'Total','FontSize',24,'NumColumns', 2); % 14,'Modern pN_2O (337 ppb)' 'pCH_4 (Weak \gamma_T per Zhu+2014)',
-%,'Revised Phanerozoic pCH_4 (Strong \gamma_T)',...
-%    'Revised Phanerozoic pCH_4 (No \gamma_T)' 'Revised Phanerozoic pCH_4 (Weak \gamma_T for C-cycle)',
+    'Total','FontSize',24,'NumColumns', 2); % 14,'Modern pN_2O (337 ppb)' 'yCH_4 (Weak \gamma_T per Zhu+2014)',
+%,'Revised Phanerozoic yCH_4 (Strong \gamma_T)',...
+%    'Revised Phanerozoic yCH_4 (No \gamma_T)' 'Revised Phanerozoic yCH_4 (Weak \gamma_T for C-cycle)',
 L.AutoUpdate = 'off';
-%title('Sensitivity Test for pCH_4');
+%title('Sensitivity Test for yCH_4');
 
 box on
 
@@ -1243,7 +1243,7 @@ set(gca,'XDir','reverse');
 set(gca,'xlim',[-10,375],'ylim',[0.01,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
-xlabel('Age Before Present (Ma)'); ylabel('pCH_4 (ppm atm)')
+xlabel('Age Before Present (Ma)'); ylabel('yCH_4 (ppm atm)')
 yticks([0.1, 1, 10, 100]);
 yticklabels({'0.1','1','10','100'});
 %yticklabels({'0.1','','','','0.5','','','','','1','','','','','','','','','10','','','','50','','','','','100','','','','500','','','','','1000'});
@@ -1251,11 +1251,11 @@ yticklabels({'0.1','1','10','100'});
 pbaspect([3 1 1])
 fontsize(24,"points") % 14
 L = legend([L1, L2, L3, L4],'Nominal Range',...
-    'Fermentation','No \Gamma_{coal}','Fermentation, No \Gamma_{coal}','FontSize',24,'NumColumns', 2); % 14,'Modern pN_2O (337 ppb)' 'pCH_4 (Weak \gamma_T per Zhu+2014)',
-%,'Revised Phanerozoic pCH_4 (Strong \gamma_T)',...
-%    'Revised Phanerozoic pCH_4 (No \gamma_T)' 'Revised Phanerozoic pCH_4 (Weak \gamma_T for C-cycle)',
+    'Fermentation','No \Gamma_{coal}','Fermentation, No \Gamma_{coal}','FontSize',24,'NumColumns', 2); % 14,'Modern pN_2O (337 ppb)' 'yCH_4 (Weak \gamma_T per Zhu+2014)',
+%,'Revised Phanerozoic yCH_4 (Strong \gamma_T)',...
+%    'Revised Phanerozoic yCH_4 (No \gamma_T)' 'Revised Phanerozoic yCH_4 (Weak \gamma_T for C-cycle)',
 L.AutoUpdate = 'off';
-%title('Sensitivity Test for pCH_4');
+%title('Sensitivity Test for yCH_4');
 
 box on
 
@@ -1333,15 +1333,15 @@ set(gca,'xlim',[-10,375],'ylim',[0.02,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
 %xlabel('Age Before Present (Ma)'); 
-ylabel('pCH_4 (ppm atm)')
+ylabel('yCH_4 (ppm atm)')
 %ylim([-20,320]) % 350
 pbaspect([2 1 1])
-fontsize(16,"points") % 14 Preindustrial pCH_4 (0.565-0.715 ppm)
-L = legend('','','pCH_4 per Beerling+(2009)','','Revised pCH_4','FontSize',16); % 14,'Modern pN_2O (337 ppb)' 'pCH_4 (Weak \gamma_T per Zhu+2014)',
-%,'Revised Phanerozoic pCH_4 (Strong \gamma_T)',...
-%    'Revised Phanerozoic pCH_4 (No \gamma_T)' 'Revised Phanerozoic pCH_4 (Weak \gamma_T for C-cycle)',
+fontsize(16,"points") % 14 Preindustrial yCH_4 (0.565-0.715 ppm)
+L = legend('','','yCH_4 per Beerling+(2009)','','Revised yCH_4','FontSize',16); % 14,'Modern pN_2O (337 ppb)' 'yCH_4 (Weak \gamma_T per Zhu+2014)',
+%,'Revised Phanerozoic yCH_4 (Strong \gamma_T)',...
+%    'Revised Phanerozoic yCH_4 (No \gamma_T)' 'Revised Phanerozoic yCH_4 (Weak \gamma_T for C-cycle)',
 L.AutoUpdate = 'off';
-%title('CH_4 Partial Pressure (ppm)');
+%title('CH_4 Mixing Ratio (ppm)');
 
 box on
 
@@ -1647,7 +1647,7 @@ ylabel('GMST (^\circC)') % ,'Solar + CO_2 + Weak CH_4 \gamma_T',
  %   'Climate History with CO_2, CH_4, and N_2O (low crustal E_a, high emission scenario)','FontSize',12)
 %L.AutoUpdate = 'off';
 title('Constant Phanerozoic Climate Sensitivity (Judd+2024)')
-% (\Gamma_c = 1.7 K/(W/m^2)), assuming Beerling et al. [2009] pCH_4)
+% (\Gamma_c = 1.7 K/(W/m^2)), assuming Beerling et al. [2009] yCH_4)
 fontsize(12,"points") % 14
 
 yyaxis right
@@ -1741,7 +1741,7 @@ L = legend([L1, L2, L4, L5],'GMST Prior','Solar + CO_2 only','Solar + CO_2 + CH_
  %   'Climate History with CO_2, CH_4, and N_2O (low crustal E_a, high emission scenario)','FontSize',12)
 L.AutoUpdate = 'off';
 title('GMST-Dependent Climate Sensitivity (Wolf+2018)')
-% (\Gamma_c = 1.7 K/(W/m^2)), assuming Beerling et al. [2009] pCH_4)
+% (\Gamma_c = 1.7 K/(W/m^2)), assuming Beerling et al. [2009] yCH_4)
 fontsize(12,"points") % 14
 
 yyaxis right
@@ -1839,7 +1839,7 @@ ylabel('GMST (^\circC)') % ,'Solar + CO_2 + Weak CH_4 \gamma_T',
  %   'Climate History with CO_2, CH_4, and N_2O (low crustal E_a, high emission scenario)','FontSize',12)
 %L.AutoUpdate = 'off';
 title('Constant Phanerozoic Climate Sensitivity (Judd+2024)')
-% (\Gamma_c = 1.7 K/(W/m^2)), assuming Beerling et al. [2009] pCH_4)
+% (\Gamma_c = 1.7 K/(W/m^2)), assuming Beerling et al. [2009] yCH_4)
 fontsize(20,"points") % 14
 
 yyaxis right
@@ -1924,7 +1924,7 @@ L = legend([L1, L2, L4],'GMST Prior','Solar + CO_2 only','Solar + CO_2 + CH_4','
  %   'Climate History with CO_2, CH_4, and N_2O (low crustal E_a, high emission scenario)','FontSize',12)
 L.AutoUpdate = 'off';
 title('GMST-Dependent Climate Sensitivity (Wolf+2018)')
-% (\Gamma_c = 1.7 K/(W/m^2)), assuming Beerling et al. [2009] pCH_4)
+% (\Gamma_c = 1.7 K/(W/m^2)), assuming Beerling et al. [2009] yCH_4)
 fontsize(20,"points") % 14
 
 yyaxis right
@@ -2112,15 +2112,15 @@ set(gca,'xlim',[-10,375],'ylim',[0.02,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
 xlabel('Age Before Present (Ma)'); 
-ylabel('pCH_4 (ppm atm)')
+ylabel('yCH_4 (ppm atm)')
 %ylim([-20,320]) % 350
 pbaspect([2 1 1])
-fontsize(16,"points") % 14 Preindustrial pCH_4 (0.565-0.715 ppm)
-%L = legend('','','pCH_4 per Beerling+(2009)','','Revised pCH_4','FontSize',16); % 14,'Modern pN_2O (337 ppb)' 'pCH_4 (Weak \gamma_T per Zhu+2014)',
-%,'Revised Phanerozoic pCH_4 (Strong \gamma_T)',...
-%    'Revised Phanerozoic pCH_4 (No \gamma_T)' 'Revised Phanerozoic pCH_4 (Weak \gamma_T for C-cycle)',
+fontsize(16,"points") % 14 Preindustrial yCH_4 (0.565-0.715 ppm)
+%L = legend('','','yCH_4 per Beerling+(2009)','','Revised yCH_4','FontSize',16); % 14,'Modern pN_2O (337 ppb)' 'yCH_4 (Weak \gamma_T per Zhu+2014)',
+%,'Revised Phanerozoic yCH_4 (Strong \gamma_T)',...
+%    'Revised Phanerozoic yCH_4 (No \gamma_T)' 'Revised Phanerozoic yCH_4 (Weak \gamma_T for C-cycle)',
 %L.AutoUpdate = 'off';
-%title('CH_4 Partial Pressure (ppm)');
+%title('CH_4 Mixing Ratio (ppm)');
 
 box on
 
@@ -2289,15 +2289,15 @@ yticks([])
 % %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 % %set(gca,'yaxislocation','left')
 % xlabel('Age Before Present (Ma)'); 
-% ylabel('pCH_4 (ppm atm)')
+% ylabel('yCH_4 (ppm atm)')
 % %ylim([-20,320]) % 350
 % pbaspect([2 1 1])
-% fontsize(16,"points") % 14 Preindustrial pCH_4 (0.565-0.715 ppm)
-% L = legend('','','pCH_4 no Gcoal','','Revised pCH_4','FontSize',16); % 14,'Modern pN_2O (337 ppb)' 'pCH_4 (Weak \gamma_T per Zhu+2014)',
-% %,'Revised Phanerozoic pCH_4 (Strong \gamma_T)',...
-% %    'Revised Phanerozoic pCH_4 (No \gamma_T)' 'Revised Phanerozoic pCH_4 (Weak \gamma_T for C-cycle)',
+% fontsize(16,"points") % 14 Preindustrial yCH_4 (0.565-0.715 ppm)
+% L = legend('','','yCH_4 no Gcoal','','Revised yCH_4','FontSize',16); % 14,'Modern pN_2O (337 ppb)' 'yCH_4 (Weak \gamma_T per Zhu+2014)',
+% %,'Revised Phanerozoic yCH_4 (Strong \gamma_T)',...
+% %    'Revised Phanerozoic yCH_4 (No \gamma_T)' 'Revised Phanerozoic yCH_4 (Weak \gamma_T for C-cycle)',
 % L.AutoUpdate = 'off';
-% %title('CH_4 Partial Pressure (ppm)');
+% %title('CH_4 Mixing Ratio (ppm)');
 % 
 % box on
 % 
