@@ -60,15 +60,14 @@ In_data = load('biome_output.mat');
 % OLD Beerling et al. (2009) pCH4 reconstruction for comparison:
 TimePhanCH4 = In_data.PhanBiomes.CH4PhanTime; % years BP
 PhanCH4vals = In_data.PhanBiomes.CH4Phanppb; % in ppb: Beerling et al. 2009 pCH4 estimate 
-% cf. Fig 6b, corrected from ppb to atm (assuming ~ 1 atm = total atmospheric pressure)
-% Phanerozoic pCH4 is calculated dynamically in biofluxes using wetland emissions
+% cf. Fig 6b, corrected from ppb to mixing ratio
 
 % pCO2
 
 TimePhanCO2 = 1e6.*(In_data.PhanBiomes.CO2PhanTime); % converted from Ma to yrs BP
 TimePhanCO2 = cat(1,0,rmmissing(TimePhanCO2));
 %if Constant.invalCO2 == 1 % nominal (median, 50th percentile)
-PhanCO2vals = 1e-6.*In_data.PhanBiomes.CO2Phanppm; % transformation from ppm to atm abundance accounted for
+PhanCO2vals = 1e-6.*In_data.PhanBiomes.CO2Phanppm; % transformation from ppm to mixing ratio abundance accounted for
 %elseif Constant.invalCO2 == 2 % low (16th percentile, -sigma)
 PhanCO2valsMin = 1e-6.*In_data.PhanBiomes.CO2Phanppm_16perc; 
 %elseif Constant.invalCO2 == 3 % high (84th percentile, +sigma)
@@ -366,9 +365,8 @@ for ihl = 1:length(hilo)
     
     % CO2
     rf.CO2_atm = mr.CO2; % concentration (prescribed) 
-    % - per Dalton's Law, shouldn't depend on total atmo P (especially in
-    % Phanerozoic N2-O2 dominated atmosphere, so use this as equivalent to ppmv
-    % mixing ratios in 1-atm atmosphere 
+    % use this as equivalent to ppmv
+    % mixing ratios 
     %rf.CO2_fpp = mr.CO2./(Flux.atmoGas_tot); % concentration as partial pressure normalized to total atmospheric pressure
     rf.CO2_pm = rf.CO2_atm; % rf.CO2_fpp;
     CO2_o = 278e-6; % preindustrial modern CO2, Byrne and Goldblatt 2014
@@ -583,7 +581,7 @@ set(gca,'XDir','reverse');
 set(gca,'xlim',[-10,375],'ylim',[-4,65]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
-xlabel('Age Before Present (Ma)'); ylabel('yCH_4 (ppm atm)')
+xlabel('Age Before Present (Ma)'); ylabel('yCH_4 (ppm)')
 %ylim([-20,320]) % 350
 pbaspect([2 1 1])
 fontsize(24,"points") % 14
@@ -683,7 +681,7 @@ set(gca,'XDir','reverse');
 set(gca,'xlim',[-10,800]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
-xlabel('Age Before Present (ka)'); ylabel('yCH_4 (ppb atm)')
+xlabel('Age Before Present (ka)'); ylabel('yCH_4 (ppb)')
 %title('Pleistocene yCH_4 Data vs. Model Output')
 %ylim([-20,350])
 pbaspect([3 1 1])
@@ -748,7 +746,7 @@ box on
 %set(gca,'xlim',[0,1000],'ylim',[300,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
-%xlabel('Age Before Present (ka)'); ylabel('yCH_4 (ppb atm)')
+%xlabel('Age Before Present (ka)'); ylabel('yCH_4 (ppb)')
 %ylim([-20,350])
 %pbaspect([3 1 1])
 %fontsize(24,"points") % 14
@@ -1137,7 +1135,7 @@ set(gca,'xlim',[-10,375],'ylim',[0.01,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
 %xlabel('Age Before Present (Ma)'); 
-ylabel('yCH_4 (ppm atm)')
+ylabel('yCH_4 (ppm)')
 yticks([0.1, 1, 10, 100]);
 yticklabels({'0.1','1','10','100'});
 %yticklabels({'0.1','','','','0.5','','','','','1','','','','','','','','','10','','','','50','','','','','100','','','','500','','','','','1000'});
@@ -1243,7 +1241,7 @@ set(gca,'XDir','reverse');
 set(gca,'xlim',[-10,375],'ylim',[0.01,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
-xlabel('Age Before Present (Ma)'); ylabel('yCH_4 (ppm atm)')
+xlabel('Age Before Present (Ma)'); ylabel('yCH_4 (ppm)')
 yticks([0.1, 1, 10, 100]);
 yticklabels({'0.1','1','10','100'});
 %yticklabels({'0.1','','','','0.5','','','','','1','','','','','','','','','10','','','','50','','','','','100','','','','500','','','','','1000'});
@@ -1333,7 +1331,7 @@ set(gca,'xlim',[-10,375],'ylim',[0.02,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
 %xlabel('Age Before Present (Ma)'); 
-ylabel('yCH_4 (ppm atm)')
+ylabel('yCH_4 (ppm)')
 %ylim([-20,320]) % 350
 pbaspect([2 1 1])
 fontsize(16,"points") % 14 Preindustrial yCH_4 (0.565-0.715 ppm)
@@ -2112,7 +2110,7 @@ set(gca,'xlim',[-10,375],'ylim',[0.02,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
 xlabel('Age Before Present (Ma)'); 
-ylabel('yCH_4 (ppm atm)')
+ylabel('yCH_4 (ppm)')
 %ylim([-20,320]) % 350
 pbaspect([2 1 1])
 fontsize(16,"points") % 14 Preindustrial yCH_4 (0.565-0.715 ppm)
@@ -2289,7 +2287,7 @@ yticks([])
 % %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 % %set(gca,'yaxislocation','left')
 % xlabel('Age Before Present (Ma)'); 
-% ylabel('yCH_4 (ppm atm)')
+% ylabel('yCH_4 (ppm)')
 % %ylim([-20,320]) % 350
 % pbaspect([2 1 1])
 % fontsize(16,"points") % 14 Preindustrial yCH_4 (0.565-0.715 ppm)
