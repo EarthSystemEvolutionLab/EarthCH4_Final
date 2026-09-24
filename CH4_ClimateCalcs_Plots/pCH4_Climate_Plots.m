@@ -389,7 +389,8 @@ for ihl = 1:length(hilo)
     % NH3 not present in BG14, so not directly comparable
     
     % Calculate overlap for N2O-CO2 RF (reduction (-) added to RF of each gas)
-    % EQUALS 0 OVER ALL TIME! CAN IGNORE
+    % EQUALS 0 OVER ALL TIME! CAN IGNORE EFFECTIVELY though included below
+    % for BG14 functions
     rf.dRF_CO2_N2O = -16.16.*exp(-0.036.*(log(rf.CO2_pm - CO2_o) - 0.0024).^2 - 0.05.*(log(rf.N2O_pm - N2O_o) + 6.5).^2);
     % Calculate overlap for N2O-CH4 RF (reduction (-) added to RF of each gas)
     rf.dRF_CH4_N2O = -24.*exp(-0.02.*(log(rf.CH4_pm - CH4_o) - 0.01).^2 - 0.044.*(log(rf.N2O_pm - N2O_o) + 7.73).^2);
@@ -398,24 +399,23 @@ for ihl = 1:length(hilo)
     %if rf.CO2_pm < 200e-6
     rf.gCO2 = log(1 + 1.2.*(rf.CO2_pm.*1e6) + 0.005.*((rf.CO2_pm.*1e6).^2) + 1.4e-6.*((rf.CO2_pm.*1e6).^3)); % note that pCO2 is in ppmv here, not ppv as in BG14
     rf.gCO2_o = log(1 + 1.2.*(CO2_o.*1e6) + 0.005.*((CO2_o.*1e6).^2) + 1.4e-6.*((CO2_o.*1e6).^3)); % note that pCO2 is in ppmv here, not ppv as in BG14
-    rf.RF_CO2_1 = 3.35.*(rf.gCO2 - rf.gCO2_o) + rf.dRF_CO2_N2O; % using WMO 1999 radiative forcing function, Table 1 Byrne and Goldblatt 2014 - no overlap at such low concentrations of CO2 typically
-        % this is intended only for use when BG14 boundaries are violated (<200 ppm),
-        % otherwise use BG14
-        % unsure how to apply CO2-N2O overlap - BG14 summative overlap function assumed
-        % (for now)
+    rf.RF_CO2_1 = 3.35.*(rf.gCO2 - rf.gCO2_o); % + rf.dRF_CO2_N2O; % using WMO 1999 radiative forcing function, Table 1 Byrne and Goldblatt 2014 - no overlap at such low concentrations of CO2 typically
+        % this is intended only for use when BG14 boundaries are violated (<200 ppm), otherwise use BG14
+        % unsure how to apply CO2-N2O overlap, so none used at this low CO2 level - BG14 summative overlap
+        % function ignored bc = 0 always anyway
     %elseif rf.CO2_pm >= 200e-6
     rf.RF_CO2_2 = 5.32.*log(rf.relConc_CO2) + 0.39.*(log(rf.relConc_CO2)).^2 + rf.dRF_CO2_N2O;
     %end
     
     %if rf.CH4_pm < 0.1e-6
     rf.RF_CH4_1 = 0.036.*(sqrt(rf.CH4_pm.*1e9) - sqrt(CH4_o.*1e9)) - (0.47.*log(1 + 2.01e-5.*(rf.CH4_pm.*1e9.*N2O_o.*1e9).^(0.75) + 5.31e-15.*(rf.CH4_pm.*1e9).*(rf.CH4_pm.*1e9.*N2O_o.*1e9).^(1.52)) ...
-            - 0.47.*log(1 + 2.01e-5.*(CH4_o.*1e9.*N2O_o.*1e9).^(0.75) + 5.31e-15.*(CH4_o.*1e9).*(CH4_o.*1e9.*N2O_o.*1e9).^(1.52))); % uses ppmv, IPCC 1990 fits with overlap, Table 1 BG14
+            - 0.47.*log(1 + 2.01e-5.*(CH4_o.*1e9.*N2O_o.*1e9).^(0.75) + 5.31e-15.*(CH4_o.*1e9).*(CH4_o.*1e9.*N2O_o.*1e9).^(1.52))); % uses ppbv, IPCC 1990 fits with overlap, Table 1 BG14
     %elseif (rf.CH4_pm < 2.5e-6) % (rf.CH4_pm >= 0.1e-6) && 
     rf.RF_CH4_2 = 1173.*(sqrt(rf.CH4_pm) - sqrt(CH4_o)) - 71636.*(sqrt(rf.CH4_pm) - sqrt(CH4_o)).^2 + rf.dRF_CH4_N2O; % BG14 Table 2
-    %elseif (rf.CH4_pm < 100e-6) %(rf.CH4_pm >= 2.5e-6) &&  assume that CH4 never exceeds 100 ppm
+    %elseif (rf.CH4_pm < 100e-6) %(rf.CH4_pm >= 2.5e-6) &&  up to 100 ppmv
     rf.RF_CH4_3 = 0.824 + 0.8.*log(rf.CH4_pm./NM1) + 0.2.*(log(rf.CH4_pm./NM1)).^2 + rf.dRF_CH4_N2O;
     %end
-    rf.RF_CH4_4 = 0.824 + 0.8.*log(100e-6./NM1) + 0.2.*(log(100e-6./NM1)).^2 + rf.dRF_CH4_N2O; % capped at highest resolvable value for BG14 polynomial equations
+    %rf.RF_CH4_4 = 0.824 + 0.8.*log(100e-6./NM1) + 0.2.*(log(100e-6./NM1)).^2 + rf.dRF_CH4_N2O; % capped at highest resolvable value for BG14 polynomial equations
     
     %if rf.N2O_pm < 0.1e-6
     % rf.RF_N2O_1 = 0.12.*(sqrt(rf.N2O_pm.*1e9) - sqrt(N2O_o.*1e9)) - (0.47.*log(1 + 2.01e-5.*(CH4_o.*1e9.*rf.N2O_pm.*1e9).^(0.75) + 5.31e-15.*(CH4_o.*1e9).*(CH4_o.*1e9.*rf.N2O_pm.*1e9).^(1.52)) ...
@@ -582,11 +582,11 @@ set(gca,'XDir','reverse');
 set(gca,'xlim',[-10,375],'ylim',[-4,65]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
-xlabel('Age Before Present (Ma)'); ylabel('yCH_4 (ppm)')
+xlabel('Age Before Present (Ma)'); ylabel('CH_4 (ppm)')
 %ylim([-20,320]) % 350
 pbaspect([2 1 1])
 fontsize(24,"points") % 14
-L = legend('Preindustrial yCH_4 (0.565-0.715 ppm)','Phanerozoic yCH_4 per Beerling+(2009)','Revised Phanerozoic yCH_4','FontSize',24); % 14,'Modern pN_2O (337 ppb)' 'yCH_4 (Weak \gamma_T per Zhu+2014)',
+L = legend('Preindustrial CH_4 (0.565-0.715 ppm)','Phanerozoic CH_4 per Beerling+(2009)','Revised Phanerozoic CH_4','FontSize',24); % 14,'Modern pN_2O (337 ppb)' 'yCH_4 (Weak \gamma_T per Zhu+2014)',
 %,'Revised Phanerozoic yCH_4 (Strong \gamma_T)',...
 %    'Revised Phanerozoic yCH_4 (No \gamma_T)' 'Revised Phanerozoic yCH_4 (Weak \gamma_T for C-cycle)',
 L.AutoUpdate = 'off';
@@ -682,13 +682,13 @@ set(gca,'XDir','reverse');
 set(gca,'xlim',[-10,800]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
-xlabel('Age Before Present (ka)'); ylabel('yCH_4 (ppb)')
+xlabel('Age Before Present (ka)'); ylabel('CH_4 (ppb)')
 %title('Pleistocene yCH_4 Data vs. Model Output')
 %ylim([-20,350])
 pbaspect([3 1 1])
 fontsize(24,"points") % 14
-L = legend('Ice Core yCH_4',...
-    'Modeled yCH_4','FontSize',28); % 'Revised Phanerozoic yCH_4 (Weak \gamma_T for C-cycle)', 14,'Modern pN_2O (337 ppb)'
+L = legend('Ice Core CH_4',...
+    'Modeled CH_4','FontSize',28); % 'Revised Phanerozoic yCH_4 (Weak \gamma_T for C-cycle)', 14,'Modern pN_2O (337 ppb)'
 %     %'Revised Phanerozoic yCH_4 (Weak \gamma_T, per Zhu+2014)',
 
 L.AutoUpdate = 'off';
@@ -1136,7 +1136,7 @@ set(gca,'xlim',[-10,375],'ylim',[0.01,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
 %xlabel('Age Before Present (Ma)'); 
-ylabel('yCH_4 (ppm)')
+ylabel('CH_4 (ppm)')
 yticks([0.1, 1, 10, 100]);
 yticklabels({'0.1','1','10','100'});
 %yticklabels({'0.1','','','','0.5','','','','','1','','','','','','','','','10','','','','50','','','','','100','','','','500','','','','','1000'});
@@ -1242,7 +1242,7 @@ set(gca,'XDir','reverse');
 set(gca,'xlim',[-10,375],'ylim',[0.01,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5e5]
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
-xlabel('Age Before Present (Ma)'); ylabel('yCH_4 (ppm)')
+xlabel('Age Before Present (Ma)'); ylabel('CH_4 (ppm)')
 yticks([0.1, 1, 10, 100]);
 yticklabels({'0.1','1','10','100'});
 %yticklabels({'0.1','','','','0.5','','','','','1','','','','','','','','','10','','','','50','','','','','100','','','','500','','','','','1000'});
@@ -1332,11 +1332,11 @@ set(gca,'xlim',[-10,375],'ylim',[0.02,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
 %xlabel('Age Before Present (Ma)'); 
-ylabel('yCH_4 (ppm)')
+ylabel('CH_4 (ppm)')
 %ylim([-20,320]) % 350
 pbaspect([2 1 1])
 fontsize(16,"points") % 14 Preindustrial yCH_4 (0.565-0.715 ppm)
-L = legend('','','yCH_4 per Beerling+(2009)','','Revised yCH_4','FontSize',16); % 14,'Modern pN_2O (337 ppb)' 'yCH_4 (Weak \gamma_T per Zhu+2014)',
+L = legend('','','CH_4 per Beerling+(2009)','','Revised CH_4','FontSize',16); % 14,'Modern pN_2O (337 ppb)' 'yCH_4 (Weak \gamma_T per Zhu+2014)',
 %,'Revised Phanerozoic yCH_4 (Strong \gamma_T)',...
 %    'Revised Phanerozoic yCH_4 (No \gamma_T)' 'Revised Phanerozoic yCH_4 (Weak \gamma_T for C-cycle)',
 L.AutoUpdate = 'off';
@@ -2111,7 +2111,7 @@ set(gca,'xlim',[-10,375],'ylim',[0.02,1000]) % ,'xtick',time_ticks,'ylim',[0,1.5
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 %set(gca,'yaxislocation','left')
 xlabel('Age Before Present (Ma)'); 
-ylabel('yCH_4 (ppm)')
+ylabel('CH_4 (ppm)')
 %ylim([-20,320]) % 350
 pbaspect([2 1 1])
 fontsize(16,"points") % 14 Preindustrial yCH_4 (0.565-0.715 ppm)
