@@ -77,9 +77,9 @@ PhanCO2vals1 = rmmissing(PhanCO2vals);
 PhanCO2valsmin = rmmissing(PhanCO2valsMin);
 PhanCO2valsmax = rmmissing(PhanCO2valsMax);
 
-PhanCO2valsF = cat(1,280e-6,PhanCO2vals1);
-PhanCO2valsMinF = cat(1,280e-6,PhanCO2valsmin);
-PhanCO2valsMaxF = cat(1,280e-6,PhanCO2valsmax);
+PhanCO2valsF = cat(1,278e-6,PhanCO2vals1); % preindustrial value of 278 ppm assumed per Byrne and Goldblatt 2014 GRL paper
+PhanCO2valsMinF = cat(1,278e-6,PhanCO2valsmin);
+PhanCO2valsMaxF = cat(1,278e-6,PhanCO2valsmax);
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 % Load and transform original CH4 emission model data and forcings
@@ -389,6 +389,7 @@ for ihl = 1:length(hilo)
     % NH3 not present in BG14, so not directly comparable
     
     % Calculate overlap for N2O-CO2 RF (reduction (-) added to RF of each gas)
+    % EQUALS 0 OVER ALL TIME! CAN IGNORE
     rf.dRF_CO2_N2O = -16.16.*exp(-0.036.*(log(rf.CO2_pm - CO2_o) - 0.0024).^2 - 0.05.*(log(rf.N2O_pm - N2O_o) + 6.5).^2);
     % Calculate overlap for N2O-CH4 RF (reduction (-) added to RF of each gas)
     rf.dRF_CH4_N2O = -24.*exp(-0.02.*(log(rf.CH4_pm - CH4_o) - 0.01).^2 - 0.044.*(log(rf.N2O_pm - N2O_o) + 7.73).^2);
@@ -417,17 +418,17 @@ for ihl = 1:length(hilo)
     rf.RF_CH4_4 = 0.824 + 0.8.*log(100e-6./NM1) + 0.2.*(log(100e-6./NM1)).^2 + rf.dRF_CH4_N2O; % capped at highest resolvable value for BG14 polynomial equations
     
     %if rf.N2O_pm < 0.1e-6
-    rf.RF_N2O_1 = 0.12.*(sqrt(rf.N2O_pm.*1e9) - sqrt(N2O_o.*1e9)) - (0.47.*log(1 + 2.01e-5.*(CH4_o.*1e9.*rf.N2O_pm.*1e9).^(0.75) + 5.31e-15.*(CH4_o.*1e9).*(CH4_o.*1e9.*rf.N2O_pm.*1e9).^(1.52)) ...
-            - 0.47.*log(1 + 2.01e-5.*(CH4_o.*1e9.*N2O_o.*1e9).^(0.75) + 5.31e-15.*(CH4_o.*1e9).*(CH4_o.*1e9.*N2O_o.*1e9).^(1.52))); % IPCC 1990 fits with overlap, Table 1 BG14
-    %elseif (rf.N2O_pm < 2.5e-6) %  (rf.N2O_pm >= 0.1e-6) &&
-    rf.RF_N2O_2 = 3899.*(sqrt(rf.N2O_pm) - sqrt(N2O_o)) + 38256.*(sqrt(rf.N2O_pm) - sqrt(N2O_o)).^2 + rf.dRF_CO2_N2O + rf.dRF_CH4_N2O; % BG14 Table 2
-    %elseif (rf.N2O_pm < 100e-6) % (rf.N2O_pm >= 2.5e-6) && 
-    rf.RF_N2O_3 = 4.182 + 3.*log(rf.N2O_pm./NM1) + 0.5469.*(log(rf.N2O_pm./NM1)).^2 + rf.dRF_CO2_N2O + rf.dRF_CH4_N2O;
-    %elseif (rf.N2O_pm >= 100e-6)
-    rf.RF_N2O_4 = 4.182 + 3.*log(100e-6./NM1) + 0.5469.*(log(100e-6./NM1)).^2 + rf.dRF_CO2_N2O + rf.dRF_CH4_N2O; 
-        % capped at maximum resolved value if pN2O exceeds max domain value of 100 ppm 
-        % Note that N2O has overlap interference from both CO2 and CH4
-    %end
+    % rf.RF_N2O_1 = 0.12.*(sqrt(rf.N2O_pm.*1e9) - sqrt(N2O_o.*1e9)) - (0.47.*log(1 + 2.01e-5.*(CH4_o.*1e9.*rf.N2O_pm.*1e9).^(0.75) + 5.31e-15.*(CH4_o.*1e9).*(CH4_o.*1e9.*rf.N2O_pm.*1e9).^(1.52)) ...
+    %         - 0.47.*log(1 + 2.01e-5.*(CH4_o.*1e9.*N2O_o.*1e9).^(0.75) + 5.31e-15.*(CH4_o.*1e9).*(CH4_o.*1e9.*N2O_o.*1e9).^(1.52))); % IPCC 1990 fits with overlap, Table 1 BG14
+    % %elseif (rf.N2O_pm < 2.5e-6) %  (rf.N2O_pm >= 0.1e-6) &&
+    % rf.RF_N2O_2 = 3899.*(sqrt(rf.N2O_pm) - sqrt(N2O_o)) + 38256.*(sqrt(rf.N2O_pm) - sqrt(N2O_o)).^2 + rf.dRF_CO2_N2O + rf.dRF_CH4_N2O; % BG14 Table 2
+    % %elseif (rf.N2O_pm < 100e-6) % (rf.N2O_pm >= 2.5e-6) && 
+    % rf.RF_N2O_3 = 4.182 + 3.*log(rf.N2O_pm./NM1) + 0.5469.*(log(rf.N2O_pm./NM1)).^2 + rf.dRF_CO2_N2O + rf.dRF_CH4_N2O;
+    % %elseif (rf.N2O_pm >= 100e-6)
+    % rf.RF_N2O_4 = 4.182 + 3.*log(100e-6./NM1) + 0.5469.*(log(100e-6./NM1)).^2 + rf.dRF_CO2_N2O + rf.dRF_CH4_N2O; 
+    %     % capped at maximum resolved value if pN2O exceeds max domain value of 100 ppm 
+    %     % Note that N2O has overlap interference from both CO2 and CH4
+    % %end
     
     % SETS CO2 RF for each for-loop case
     rf.RF_CO2 = rf.RF_CO2_2;
@@ -449,10 +450,10 @@ for ihl = 1:length(hilo)
     %   
     %end
 
-    rf.RF_N2O = rf.RF_N2O_2;
-    rf.RF_N2O(rf.N2O_pm < 0.1e-6) = rf.RF_N2O_1(rf.N2O_pm < 0.1e-6);
-    rf.RF_N2O(rf.N2O_pm >= 2.5e-6) = rf.RF_N2O_3(rf.N2O_pm >= 2.5e-6);
-    rf.RF_N2O(rf.N2O_pm >= 100e-6) = rf.RF_N2O_4(rf.N2O_pm >= 100e-6); % accounts for CO2-CH4 overlap
+    % rf.RF_N2O = rf.RF_N2O_2;
+    % rf.RF_N2O(rf.N2O_pm < 0.1e-6) = rf.RF_N2O_1(rf.N2O_pm < 0.1e-6);
+    % rf.RF_N2O(rf.N2O_pm >= 2.5e-6) = rf.RF_N2O_3(rf.N2O_pm >= 2.5e-6);
+    % rf.RF_N2O(rf.N2O_pm >= 100e-6) = rf.RF_N2O_4(rf.N2O_pm >= 100e-6); % accounts for CO2-CH4 overlap
     
     %rf.deltaT_CO2 = ClimateSensitivityK.*rf.RF_CO2;
     %rf.deltaT_CH4 = ClimateSensitivityK.*rf.RF_CH4;
@@ -461,40 +462,40 @@ for ihl = 1:length(hilo)
     % comparison of RF calculated in EONS script above to RF of N2O/CH4
     
     
-    % CASE: where atmospheric pN2O is negligible and hence no overlap!
-    %if rf.CO2_pm < 200e-6
-    %rf.gCO2 = log(1 + 1.2.*(rf.CO2_pm.*1e6) + 0.005.*((rf.CO2_pm.*1e6).^2) + 1.4e-6.*((rf.CO2_pm.*1e6).^3)); % note that pCO2 is in ppmv here, not ppv as in BG14
-    %rf.gCO2_o = log(1 + 1.2.*(CO2_o.*1e6) + 0.005.*((CO2_o.*1e6).^2) + 1.4e-6.*((CO2_o.*1e6).^3)); % note that pCO2 is in ppmv here, not ppv as in BG14
-    rf.RF_CO2_1_noN2O = 3.35.*(rf.gCO2 - rf.gCO2_o); % NO N2O overlap + rf.dRF_CO2_N2O; % using WMO 1999 radiative forcing function, Table 1 Byrne and Goldblatt 2014 - no overlap at such low concentrations of CO2 typically
-        % this is intended only for use when BG14 boundaries are violated (<200 ppm),
-        % otherwise use BG14
-        % unsure how to apply CO2-N2O overlap - BG14 summative overlap function assumed
-        % (for now)
-    %elseif rf.CO2_pm >= 200e-6
-    rf.RF_CO2_2_noN2O = 5.32.*log(rf.relConc_CO2) + 0.39.*(log(rf.relConc_CO2)).^2; % NO N2O + rf.dRF_CO2_N2O;
-    %end
-    
-    %if rf.CH4_pm < 0.1e-6
-    rf.RF_CH4_1_noN2O = 0.036.*(sqrt(rf.CH4_pm.*1e9) - sqrt(CH4_o.*1e9)); % NO N2O - (0.47.*log(1 + 2.01e-5.*(rf.CH4_pm.*1e9.*N2O_o.*1e9).^(0.75) + 5.31e-15.*(rf.CH4_pm.*1e9).*(rf.CH4_pm.*1e9.*N2O_o.*1e9).^(1.52)) ...
-          %  - 0.47.*log(1 + 2.01e-5.*(CH4_o.*1e9.*N2O_o.*1e9).^(0.75) + 5.31e-15.*(CH4_o.*1e9).*(CH4_o.*1e9.*N2O_o.*1e9).^(1.52))); % uses ppmv, IPCC 1990 fits with overlap, Table 1 BG14
-    %elseif (rf.CH4_pm < 2.5e-6) % (rf.CH4_pm >= 0.1e-6) && 
-    rf.RF_CH4_2_noN2O = 1173.*(sqrt(rf.CH4_pm) - sqrt(CH4_o)) - 71636.*(sqrt(rf.CH4_pm) - sqrt(CH4_o)).^2; % No N2O + rf.dRF_CH4_N2O; % BG14 Table 2
-    %elseif (rf.CH4_pm < 100e-6) %(rf.CH4_pm >= 2.5e-6) &&  assume that CH4 never exceeds 100 ppm
-    rf.RF_CH4_3_noN2O = 0.824 + 0.8.*log(rf.CH4_pm./NM1) + 0.2.*(log(rf.CH4_pm./NM1)).^2; % No N2O + rf.dRF_CH4_N2O;
-    %end
-    rf.RF_CH4_4_noN2O = 0.824 + 0.8.*log(100e-6./NM1) + 0.2.*(log(100e-6./NM1)).^2; % No N2O + rf.dRF_CH4_N2O; % capped at highest resolvable value for BG14 polynomial equations
-    
-    rf.RF_CO2_noN2O = rf.RF_CO2_2_noN2O;
-    rf.RF_CO2_noN2O(rf.CO2_pm < 200e-6) = rf.RF_CO2_1_noN2O(rf.CO2_pm < 200e-6);
-    
-    rf.RF_CH4_noN2O = rf.RF_CH4_2_noN2O;
-    rf.RF_CH4_noN2O(rf.CH4_pm < 0.1e-6) = rf.RF_CH4_1_noN2O(rf.CH4_pm < 0.1e-6);
-    rf.RF_CH4_noN2O(rf.CH4_pm >= 2.5e-6) = rf.RF_CH4_3_noN2O(rf.CH4_pm >= 2.5e-6); % assumed that CH4 never exceeds 100 ppm!
-    % IF CH4 exceeds 100 ppm -
-    rf.RF_CH4_noN2O(rf.CH4_pm >= 100e-6) = interp1(log10(BG14_pCH4),BG14_RF_CH4,log10(rf.CH4_pm(rf.CH4_pm >= 100e-6)),'linear'); % linear interpolation in semilogx space should be reasonably accurate (rf.CH4_pm >= 100e-6);
-    % This resolves the case where pN2O is negligible, hence no overlap at all
-    % (endmember case, allows for somewhat enhanced CH4-CO2 greenhouse with less
-    % overlap)
+    % % CASE: where atmospheric pN2O is negligible and hence no overlap!
+    % %if rf.CO2_pm < 200e-6
+    % %rf.gCO2 = log(1 + 1.2.*(rf.CO2_pm.*1e6) + 0.005.*((rf.CO2_pm.*1e6).^2) + 1.4e-6.*((rf.CO2_pm.*1e6).^3)); % note that pCO2 is in ppmv here, not ppv as in BG14
+    % %rf.gCO2_o = log(1 + 1.2.*(CO2_o.*1e6) + 0.005.*((CO2_o.*1e6).^2) + 1.4e-6.*((CO2_o.*1e6).^3)); % note that pCO2 is in ppmv here, not ppv as in BG14
+    % rf.RF_CO2_1_noN2O = 3.35.*(rf.gCO2 - rf.gCO2_o); % NO N2O overlap + rf.dRF_CO2_N2O; % using WMO 1999 radiative forcing function, Table 1 Byrne and Goldblatt 2014 - no overlap at such low concentrations of CO2 typically
+    %     % this is intended only for use when BG14 boundaries are violated (<200 ppm),
+    %     % otherwise use BG14
+    %     % unsure how to apply CO2-N2O overlap - BG14 summative overlap function assumed
+    %     % (for now)
+    % %elseif rf.CO2_pm >= 200e-6
+    % rf.RF_CO2_2_noN2O = 5.32.*log(rf.relConc_CO2) + 0.39.*(log(rf.relConc_CO2)).^2; % NO N2O + rf.dRF_CO2_N2O;
+    % %end
+    % 
+    % %if rf.CH4_pm < 0.1e-6
+    % rf.RF_CH4_1_noN2O = 0.036.*(sqrt(rf.CH4_pm.*1e9) - sqrt(CH4_o.*1e9)); % NO N2O - (0.47.*log(1 + 2.01e-5.*(rf.CH4_pm.*1e9.*N2O_o.*1e9).^(0.75) + 5.31e-15.*(rf.CH4_pm.*1e9).*(rf.CH4_pm.*1e9.*N2O_o.*1e9).^(1.52)) ...
+    %       %  - 0.47.*log(1 + 2.01e-5.*(CH4_o.*1e9.*N2O_o.*1e9).^(0.75) + 5.31e-15.*(CH4_o.*1e9).*(CH4_o.*1e9.*N2O_o.*1e9).^(1.52))); % uses ppmv, IPCC 1990 fits with overlap, Table 1 BG14
+    % %elseif (rf.CH4_pm < 2.5e-6) % (rf.CH4_pm >= 0.1e-6) && 
+    % rf.RF_CH4_2_noN2O = 1173.*(sqrt(rf.CH4_pm) - sqrt(CH4_o)) - 71636.*(sqrt(rf.CH4_pm) - sqrt(CH4_o)).^2; % No N2O + rf.dRF_CH4_N2O; % BG14 Table 2
+    % %elseif (rf.CH4_pm < 100e-6) %(rf.CH4_pm >= 2.5e-6) &&  assume that CH4 never exceeds 100 ppm
+    % rf.RF_CH4_3_noN2O = 0.824 + 0.8.*log(rf.CH4_pm./NM1) + 0.2.*(log(rf.CH4_pm./NM1)).^2; % No N2O + rf.dRF_CH4_N2O;
+    % %end
+    % rf.RF_CH4_4_noN2O = 0.824 + 0.8.*log(100e-6./NM1) + 0.2.*(log(100e-6./NM1)).^2; % No N2O + rf.dRF_CH4_N2O; % capped at highest resolvable value for BG14 polynomial equations
+    % 
+    % rf.RF_CO2_noN2O = rf.RF_CO2_2_noN2O;
+    % rf.RF_CO2_noN2O(rf.CO2_pm < 200e-6) = rf.RF_CO2_1_noN2O(rf.CO2_pm < 200e-6);
+    % 
+    % rf.RF_CH4_noN2O = rf.RF_CH4_2_noN2O;
+    % rf.RF_CH4_noN2O(rf.CH4_pm < 0.1e-6) = rf.RF_CH4_1_noN2O(rf.CH4_pm < 0.1e-6);
+    % rf.RF_CH4_noN2O(rf.CH4_pm >= 2.5e-6) = rf.RF_CH4_3_noN2O(rf.CH4_pm >= 2.5e-6); % assumed that CH4 never exceeds 100 ppm!
+    % % IF CH4 exceeds 100 ppm -
+    % rf.RF_CH4_noN2O(rf.CH4_pm >= 100e-6) = interp1(log10(BG14_pCH4),BG14_RF_CH4,log10(rf.CH4_pm(rf.CH4_pm >= 100e-6)),'linear'); % linear interpolation in semilogx space should be reasonably accurate (rf.CH4_pm >= 100e-6);
+    % % This resolves the case where pN2O is negligible, hence no overlap at all
+    % % (endmember case, allows for somewhat enhanced CH4-CO2 greenhouse with less
+    % % overlap)
     
     
     %rf.RF_tot_CO2_CH4 = rf.RF_CH4_noN2O + rf.RF_CO2_noN2O; % no N2O, no N2O-CO2/CH4 overlap
