@@ -74,15 +74,15 @@ figure(1032);clf
 
 %semilogx(16.04.*1e-9.*pCH4_modeled24C(1:end-1).*Constant.mia./1e12,Tau_CH4_modeled24C(1:end-1),'c','Marker','o','LineStyle','none','MarkerEdgeColor','c','MarkerFaceColor','c') % excluding PI value as outlier/altered
 %hold on
-semilogx(16.04.*1e-9.*pCH4_modeled14C(1:end-1).*Constant.mia./1e12,Tau_CH4_modeled14C(1:end-1),'k','Marker','*','LineStyle','none','MarkerEdgeColor','k','MarkerFaceColor','k') % excluding PI value as outlier/altered
+semilogx(16.04.*1e-9.*pCH4_modeled14C(1:end-1).*Constant.mia./1e12,Tau_CH4_modeled14C(1:end-1),'k','Marker','*','LineStyle','none','MarkerEdgeColor','k','MarkerFaceColor','k','MarkerSize',10) % excluding PI value as outlier/altered
 hold on
-semilogx(16.04.*Photochem_soil_pCH4(1:end-1).*Constant.mia./1e12,Photochem_soil_TauCH4(1:end-1),'m','Marker','*','MarkerFaceColor','m','LineStyle','none') %
+semilogx(16.04.*Photochem_soil_pCH4(1:end-1).*Constant.mia./1e12,Photochem_soil_TauCH4(1:end-1),'m','Marker','*','MarkerFaceColor','m','LineStyle','none','MarkerSize',10) %
 hold on
 %semilogx(16.04.*1e-9.*pCH4_modeledModern(1:end-1).*Constant.mia./1e12,Tau_CH4_modeledModern(1:end-1),'r','Marker','^','LineStyle','none','MarkerEdgeColor','r','MarkerFaceColor','r') % excluding PI value as outlier/altered
 %hold on
 %semilogx(16.04.*1e-9.*pCH4_modeledModern80(1:end-1).*Constant.mia./1e12,Tau_CH4_modeledModern80(1:end-1),'y','Marker','^','LineStyle','none','MarkerEdgeColor','r','MarkerFaceColor','y') % excluding PI value as outlier/altered
 %hold on
-semilogx(16.04.*1e-9.*BeerlingpCH4_ppb_350Ma(1:end-1).*Constant.mia./1e12,TauCH4_B09(1:end-1),'g','Marker','d','LineStyle','none','MarkerEdgeColor','g','MarkerFaceColor','b') % excluding PI value as outlier/altered
+semilogx(16.04.*1e-9.*BeerlingpCH4_ppb_350Ma(1:end-1).*Constant.mia./1e12,TauCH4_B09(1:end-1),'g','Marker','d','LineStyle','none','MarkerEdgeColor','g','MarkerFaceColor','b','MarkerSize',10) % excluding PI value as outlier/altered
 hold on
 semilogx(GEOS_blue_burden,GEOS_blue_Tau,'color',[0 0 0.8],'Marker','none');
 hold on
@@ -122,15 +122,15 @@ xlim([700, 1e5]);
 % olor','k','MarkerFaceColor','k')
 %hold on
 xlabel('Atmospheric CH_4 Burden (Tg CH_4)'); ylabel('CH_4 Emission Lifetime (\tau_{CH_4}, years)')
-L = legend('\itphotochem\rm, no soil sink','\itphotochem\rm, w/ soil v_{dep} sink',...
+L = legend('\itphotochem\rm, no soil sink','\itphotochem\rm, with soil sink',...
     'Calculated from Beerling+2009, Cambridge 2-D CTM',...
     'GEOS-Chem (Holmes 2018)','Oslo CTM2 (Holmes 2018, cf. Isaksen+2011)',...
-    '1750 Burden (cf. Holmes 2018)','2010 Burden (cf. Holmes 2018)','2100 Burden (RCP8.5, cf. Holmes 2018)',...
+    '1750 CH_4 Burden (cf. Holmes 2018)','2010 CH_4 Burden (cf. Holmes 2018)','2100 CH_4 Burden (RCP8.5, cf. Holmes 2018)',...
     'FontSize',24); % 'Photochem PI w/ modern dT/dz, 21% pO_2, w/ soil Vdep sink', 'Modern PHOTOCHEM per Wogan+2025', ,'PHOTOCHEM PI tuned, modern dT/dz, 21% pO_2, prescribed pCH_4 per GEOS-Chem',
 %,'Revised Phanerozoic pCH_4 (Strong \gamma_T)',...
 %    'Revised Phanerozoic pCH_4 (No \gamma_T)' 'GEOS-Chem \tau_p (Holmes 2018)',
 L.AutoUpdate = 'off';
-title('Atmospheric CH_4 Lifetime vs. Burden')
+%title('Atmospheric CH_4 Lifetime vs. Burden')
 % ALL photochem runs computed with CH_4 emissions digitized from
 % Beerling+2009 to match B+09 data. EXCLUDES PI results, since skewed in
 % some of these older output files (since corrected in Emissions calcs)
