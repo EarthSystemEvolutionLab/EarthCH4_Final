@@ -2147,8 +2147,6 @@ yticks([])
 
 
 
-
-
 % % Duplicate
 % figure(2011145);clf
 % 
